@@ -20,5 +20,57 @@
         <button id='post-btn'>Sell!</button>
       </nav>
     </header>
+    <main>
+      <article id="items">
+        <!-- view where items will get loaded into  -->
+        <section id="home">
+        </section>
+
+        <div id='item-data'>
+
+          <div class='card-container'>
+            <!-- Health point information should be hidden when the Pokedex view is shown, and
+                 displayed when the pokedex view is hidden (ie, in the Game View) -->
+            <div class='hidden hp-info'>
+              <p>HP:</p>
+              <div class='health-bar'></div>
+            </div>
+
+            <div class='card'>
+              <img src='' alt='type' class='type' />
+              <span class='cost'>$50</span>
+              <h2 class='name'>Item name</h2>
+              <div class='pokemon-pic'>
+                <img src='' alt='pokemon' class='pokepic' />
+              </div>
+              <p class='info'>Description Here</p>
+              <div class='Recommendations'>
+                <button disabled>
+                  <span class='move'>Move Name Here</span> <span class='dp'></span>
+                  <img src='https://courses.cs.washington.edu/courses/cse154/webservices/pokedex/icons/fighting.jpg' alt='Pokemon move' />
+                </button>
+                <button disabled>
+                  <span class='move'>Move Name Here</span> <span class='dp'></span>
+                  <img src='https://courses.cs.washington.edu/courses/cse154/webservices/pokedex/icons/fighting.jpg' alt='Pokemon move' />
+                </button>
+                <button disabled>
+                  <span class='move'>Move Name Here</span> <span class='dp'></span>
+                  <img src='https://courses.cs.washington.edu/courses/cse154/webservices/pokedex/icons/fighting.jpg' alt='Pokemon move' />
+                </button>
+                <button disabled>
+                  <span class='move'>Move Name Here</span> <span class='dp'></span>
+                  <img src='https://courses.cs.washington.edu/courses/cse154/webservices/pokedex/icons/fighting.jpg' alt='Pokemon move' />
+                </button>
+              </div>
+              <img src='' alt='weakness' class='weakness' />
+            </div>
+
+            <button class='hidden' id='buy-btn'>Buy this item</button>
+            <button class='hidden' id='shop-btn'>Back to shopping</button>
+          </div>
+        </div>
+
+      </article>
+    </main>
   </body>
 </html>
