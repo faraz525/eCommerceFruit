@@ -17,12 +17,12 @@ app.get('/shopping/shop', async function(req, res) {
     let db = await getDBConnection();
     if (req.query['search']) {
       let val = "'%" + req.query['search'] + "%'";
-      let sql = 'SELECT id FROM yips WHERE yip LIKE ' + val;
+      let sql = 'SELECT id FROM index WHERE name LIKE ' + val;
       let ex1 = await db.all(sql);
       await db.close();
       res.json(ex1);
     } else {
-      let ex1 = await db.all('SELECT * FROM yips ORDER BY date DESC');
+      let ex1 = await db.all('SELECT * FROM index ORDER BY date DESC');
       db.close();
       res.json(ex1);
     }
