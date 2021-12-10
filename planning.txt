@@ -20,7 +20,7 @@ Home page: Page where all the items in the backend are loaded up and displayed t
   - Can be displayed in either a list view or a grid view
 
 item view: If a user clicks on an item the view expands and more information is provided about the
-item such as quanitity availible, price of it, and who is selling the item. Additionally,
+item such as quanitity availible, prce of it, and who is selling the item. Additionally,
 the buying action can be done from the item view as there will be a button to puchase a certain
 amount of product.
 
@@ -30,4 +30,4 @@ that our site supports, a description of their product, and finally the quantity
 they are sellinig their products at.
 
 Account view: Users are able to track their history and see what items they have purchased and
-how much money they have spent. 
+how much money they have spent.
