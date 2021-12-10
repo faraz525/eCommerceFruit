@@ -9,7 +9,7 @@ main {
 
 /* fonts */
 header, .individual {
-  font-family: 'Chelsea Market', cursive;
+  font-family: 'Inconsolata', monospace;
 }
 
 main, button, input {
@@ -27,7 +27,7 @@ header, nav {
 }
 
 header {
-  background-color: #B58BAB;
+  background-color: #ADE25D;
   position: sticky;
   top: 0;
   height: 15vh;
@@ -38,11 +38,15 @@ nav input {
   width: 35vw;
 }
 
+nav button {
+  font-size: 1vw;
+  width: 20%;
+}
+
+/* universal properties */
 button {
   font-weight: bold;
-  font-size: 1vw;
   margin: 1%;
-  width: 20%;
   cursor: pointer;
   text-align: center;
 }
@@ -51,132 +55,262 @@ button:hover {
   background-color: #E8E4E1;
 }
 
-.hidden {
-  display: none;
+h2 {
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.card, #pokedex-view {
-  border: 5px outset #777;
-  border-radius: 15px;
+/* shared classes */
+
+.view-border {
+  border: 4px;
+  border-style: dotted;
+  border-radius: 5px;
+  border-color: #3A5743;
 }
 
-#p1, #p2 {
+/* login styles */
+#login label {
+  margin-top: 16px;
+  margin-bottom: 6px;
+}
+
+#login form {
+  display: flex;
+  flex-direction: column;
+  background-color: #CFFFB3;
+  padding: 5px 17px 17px 17px;
+  width: 45vw;
+  border-radius: 5px;
+  margin: auto;
+}
+
+#login form input {
+  width: 40vw;
+  height: 35px;
+}
+
+#login button {
+  width:fit-content;
+}
+
+/* visuals styles */
+#visuals {
+  padding: 5px;
+}
+
+#visuals h2 {
+  font-size: 25px;
+  text-align: center;
+}
+
+#visuals h3 {
+  font-size: 20px;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+/* home styles */
+#home {
+  display: flex;
+  box-sizing: content-box;
+  height: 520px;
+  min-width: 200px;
+  overflow-y: scroll;
+  overflow: -moz-scrollbars-none;
+  padding: 20px;
+}
+
+.gridLayout {
+  width: 80vw;
+  flex-wrap: wrap;
+}
+
+.listLayout {
+  width: 30vw;
+  flex-wrap: nowrap;
+  flex-direction: column;
+}
+
+.product {
+  height: 250px;
+  padding: 5px 10px;
+  margin: 0px 10px;
+
+  border-style: solid;
+  border-radius: 20px;
+  border-color: #3A5743;
+}
+
+.product :hover {
+  cursor: pointer;
+}
+
+.product img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  display: block;
+  margin: 0px auto 5px auto;
+}
+
+.product div, .product h3, .product p {
+  /* flexboxes are the hashmaps of css */
   display: flex;
 }
 
-.card {
-  height: 520px;
-  position: relative; /* for weakness icon positioning */
+.product > div {
+  justify-content: space-between;
+  flex-direction: row;
 }
 
-.card-container {
-  margin-right: auto;
-  width: 350px;
+.product #labels, .product #values {
+  flex-direction: column;
 }
 
-.info {
-  font-size: 11pt;
-  font-style: italic;
-  height: 60px;
-  margin: auto auto;
-  -ms-overflow-style: none;
-  overflow: -moz-scrollbars-none;
-  overflow-y: scroll;
-  padding: 4px;
-  text-align: center;
-  width: 90%;
+.product h3 {
+  font-size: 25px;
+  width: fit-content;
+  margin-bottom: 8px;
+
+  border: 2px;
+  border-radius: 2px;
+  border-bottom-style: solid;
+  border-color: #3A5743 ;
 }
 
-.pokepic {
-  height: 80%;
-  object-fit: contain;
-  width: 80%;
+.product h3, .product #values p:nth-of-type(1) {
+  align-items: center;
+  height: 30px;
+  margin-top: 0px;
 }
 
-.pokemon-pic {
-  border: 4px solid #999;
-  border-radius: 15px;
-  height: 150px;
-  margin-left: auto;
-  margin-right: auto;
-  width: 200px;
+.product #values p:nth-of-type(1) {
+  margin-bottom: 10px;
 }
 
-#results-container {
-  margin-left: 50px; /* to balance centering with #p2 buffs container */
-  margin-right: 0;
-  margin-top: 80px;
-  text-align: center;
+.product #values {
+  width: 30%;
 }
 
-.card > img, .moves img {
-  border-radius: 50%;
-  padding: 5px;
-  width: 30px;
-}
-
-.type {
-  float: left;
-  margin: 3px 5px 3px 3px;
-}
-
-.weakness {
-  bottom: 0;
-  left: 3px;
-  position: absolute;
-}
-
-/* Move Button Styles */
-.moves {
-  font-size: 12pt;
-  margin: auto auto;
+.product #labels {
   width: 70%;
 }
 
-.moves button {
-  background-color: #f7f7f7;
-  border: 5px outset #999;
-  border-radius: 6px;
-  box-shadow: 1px 3px #999;
-  font-size: 12pt;
-  padding: 2px 10px 2px 10px;
-  margin: 5px 0;
-  text-align: left;
-  transition-duration: 0.4s;
-  width: 100%;
+.product #labels p, .product #lables h3 {
+  justify-content: left;
 }
 
-/* Only apply interactive cues on p1 moves */
-#p1 .moves button:hover {
-  background-color: #ccc;
+.product #values p {
+  justify-content: right;
 }
 
-#p1 .moves button:active:not([disabled]) {
-  background-color: #888;
-  box-shadow: 0 5px #666;
-  transform: translateY(2px);
+.product #values p {
+  font-size: 13px;
 }
 
-.moves img {
-  float: left;
-  margin-right: 5px;
-  height: 20px;
-  width: 20px;
+.product #labels p, .product #values p:nth-of-type(2), .product #values p:nth-of-type(3) {
+  height: fit-content;
+  margin: 0;
 }
 
-.moves .dp {
-  float: right;
-  line-height: 2em;
-  vertical-align: middle;
+.product #labels p:nth-of-type(1), .product #values p:nth-of-type(2) {
+  font-size: 11px;
 }
 
-.moves .move {
-  font-weight: bold;
-  line-height: 2em;
-  vertical-align: middle;
+.product #labels p:nth-of-type(2), .product #values p:nth-of-type(3) {
+  font-size: 16px;
+  word-break: break-all;
 }
 
-.hp {
-  float: right;
-  margin: 15px;
+.product #labels p:nth-of-type(2) {
+  inline-size: 90%;
+}
+
+/* cart view */
+#cart {
+  width: 80vw;
+}
+
+#cart-bag {
+  display: flex;
+  box-sizing: content-box;
+  flex-wrap: nowrap;
+  overflow-x: scroll;
+}
+
+#cart-bag .product {
+  width: 180px;
+}
+
+#cart-bag .product :hover {
+  cursor: pointer;
+  opacity: 1;
+}
+
+.hover-div {
+  position: absolute;
+  height: 250px;
+  width: 180px;
+  opacity: 0;
+  background-color: #CFFFB3;
+}
+
+.hover-text {
+  color: black;
+  font-size: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+#cart p:nth-of-type(1) {
+  font-size: 20px;
+  margin-bottom: 0px;
+}
+
+#cart #cart-sum-price {
+  font-size: 25px;
+  margin: 0px auto;
+}
+
+/* One item view */
+#view-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+#single {
+  align-items: center;
+  min-width: 250px;
+  padding: 0px 6px;
+}
+
+#single > p {
+  text-align: center;
+}
+
+#single form div, #single div:nth-of-type(2) {
+  display: flex;
+  width: fit-content;
+  margin: 10px auto 0px;
+}
+
+#single form input {
+  width: 60px;
+  margin: 0px 20px 0px 10px;
+}
+
+#single div:nth-of-type(2) > p:nth-of-type(1) {
+  margin-right: 10px;
+}
+
+.hidden {
+  display: none !important;
 }

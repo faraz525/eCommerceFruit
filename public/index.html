@@ -3,7 +3,7 @@
   <head>
     <meta charset='utf-8'>
     <title>FN-Shopping</title>
-    <link href='https://fonts.googleapis.com/css2?family=Chelsea+Market&family=Roboto:wght@400;700&display=swap' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata&display=swap" rel="stylesheet">
     <link rel='stylesheet' href='styles.css'>
     <script src='index.js'></script>
   </head>
@@ -17,72 +17,164 @@
         <input id='search-term' type='text'>
         <button id='search-btn' disabled>Search</button>
         <button id='home-btn'>Home</button>
-        <button id='post-btn'>Sell!</button>
+        <button id='post-btn'>Cart</button>
+        <button id='account-btn'>Account</button>
       </nav>
     </header>
     <main>
       <article id="overall">
-        <section id="login">
+        <!-- view where the user will login-->
+        <h2>We've got Great Grains!</h2>
+        <section id="login" class="hidden">
+          <form>
+            <label for='name'>Username</label>
+            <input type='text' id='name' name='name' required>
+            <label for='yip'>Password</label>
+            <input type='text' id='password' name='password' required>
+            <button>Submit</button>
+          </form>
         </section>
 
-        <!-- view where items will get loaded into  -->
-        <section id="home">
-        </section>
+        <!-- view which contains filters, the items view, and a single item view-->
+        <article id="view-container">
+          <section id="visuals" class="view-border hidden">
+            <h2>Change Menu Results:</h2>
+            <label><input type="radio" name="itemsView" value="grid" checked>Grid View</label>
+            <br>
+            <label><input type="radio" name="itemsView" value="list">List View</label>
+            <h3>Filters:</h3>
+            <label><input type="checkbox" name="itemsFilter" value="wheat" checked>Wheat</label>
+            <br>
+            <label><input type="checkbox" name="itemsFilter" value="barley" checked>Barley</label>
+            <br>
+            <label><input type="checkbox" name="itemsFilter" value="corn" checked>Corn</label>
+            <br>
+            <label><input type="checkbox" name="itemsFilter" value="rice" checked>Rice</label>
+            <br>
+            <label><input type="checkbox" name="itemsFilter" value="maize" checked>Maize</label>
+            <br>
+            <button id="filter-btn">Update filters</button>
+          </section>
 
-        <section id="product">
-        </section>
+          <!-- view where products will get loaded into  -->
+          <section id="home" class="view-border gridLayout hidden">
+            <div class="product">
+              <img src="img/wheat.jpg" alt="https://pxhere.com/en/photo/1593115">
+              <div>
+                <div id="labels">
+                  <h3>wheat</h3>
+                  <p>Seller:</p>
+                  <p>Joe Mama</p>
+                </div>
+                <div id="values">
+                  <p>$20.00</p>
+                  <p>Avaliable:</p>
+                  <p>50</p>
+                </div>
+              </div>
+            </div>
+            <div class="product">
+              <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
+              <div>
+                <div id="labels">
+                  <h3>barley</h3>
+                  <p>Seller:</p>
+                  <p>Faraz Chadeshi</p>
+                </div>
+                <div id="values">
+                  <p>$420.69</p>
+                  <p>Avaliable:</p>
+                  <p>1000</p>
+                </div>
+              </div>
+            </div>
+            <div class="product">
+              <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
+              <div>
+                <div id="labels">
+                  <h3>barley</h3>
+                  <p>Seller:</p>
+                  <p>Faraz Chadeshi</p>
+                </div>
+                <div id="values">
+                  <p>$420.69</p>
+                  <p>Avaliable:</p>
+                  <p>1000</p>
+                </div>
+              </div>
+            </div>
+          </section>
 
-        <section id="cart">
-        </section>
+          <!-- view of all items the user intends to purchase-->
+          <section id="cart" class="view-border">
+            <div id="cart-bag">
+              <div class="product">
+                <div class="hover-div">
+                  <div class="hover-text">Remove from cart</div>
+                </div>
+                <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
+                <div>
+                  <div class="labels">
+                    <h3 class="product-name">barley</h3>
+                    <p>Seller:</p>
+                    <p class="product-seller">Faraz Chadeshi</p>
+                  </div>
+                  <div class="values">
+                    <p class="product-money">$420.34369</p>
+                    <p>Avaliable:</p>
+                    <p class="product-amount">1000</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p>Your total purchase will cost:</p>
+            <p id="cart-sum-price"> $0123</p>
+            <button id="buy-cart-btn">Confirm Purchase</button>
+            <p id="purchase-response">Order succesfull, confirmation number 123124</p>
+          </section>
 
-        <section id="accounts">
-        </section>
+          <!-- view of all transactions made on the account-->
+          <section id="account">
+          </section>
 
+          <!-- view of a singular product-->
+          <section id="single" class="view-border hidden">
+            <p>What would you like to do with this product?</p>
+            <div class="product">
+              <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
+              <div>
+                <div id="labels">
+                  <h3>barley</h3>
+                  <p>Seller:</p>
+                  <p>Faraz Chadeshi</p>
+                </div>
+                <div id="values">
+                  <p>$420.69</p>
+                  <p>Avaliable:</p>
+                  <p>1000</p>
+                </div>
+              </div>
+            </div>
+            <form>
+              <div>
+                <label for='count'>count: </label>
+                <input type='number' min="0" id='count' name='count' required>
+                <button id="buy">Add to Cart</button>
+                <button id="sell">Sell</button>
+              </div>
+            </form>
+            <div>
+              <p>Sum value: </p>
+              <p id="single-sum-price">$21</p>
+            </div>
+        </section>
+      </article>
+
+        <!-- may not need this-->
         <section id="sell">
         </section>
 
         <div id='item-data'>
-
-          <div class='card-container'>
-            <!-- Health point information should be hidden when the Pokedex view is shown, and
-                 displayed when the pokedex view is hidden (ie, in the Game View) -->
-            <div class='hidden hp-info'>
-              <p>HP:</p>
-              <div class='health-bar'></div>
-            </div>
-
-            <div class='card'>
-              <img src='' alt='type' class='type' />
-              <span class='cost'>$50</span>
-              <h2 class='name'>Item name</h2>
-              <div class='pokemon-pic'>
-                <img src='' alt='pokemon' class='pokepic' />
-              </div>
-              <p class='info'>Description Here</p>
-              <div class='Recommendations'>
-                <button disabled>
-                  <span class='move'>Move Name Here</span> <span class='dp'></span>
-                  <img src='https://courses.cs.washington.edu/courses/cse154/webservices/pokedex/icons/fighting.jpg' alt='Pokemon move' />
-                </button>
-                <button disabled>
-                  <span class='move'>Move Name Here</span> <span class='dp'></span>
-                  <img src='https://courses.cs.washington.edu/courses/cse154/webservices/pokedex/icons/fighting.jpg' alt='Pokemon move' />
-                </button>
-                <button disabled>
-                  <span class='move'>Move Name Here</span> <span class='dp'></span>
-                  <img src='https://courses.cs.washington.edu/courses/cse154/webservices/pokedex/icons/fighting.jpg' alt='Pokemon move' />
-                </button>
-                <button disabled>
-                  <span class='move'>Move Name Here</span> <span class='dp'></span>
-                  <img src='https://courses.cs.washington.edu/courses/cse154/webservices/pokedex/icons/fighting.jpg' alt='Pokemon move' />
-                </button>
-              </div>
-              <img src='' alt='weakness' class='weakness' />
-            </div>
-
-            <button class='hidden' id='buy-btn'>Buy this item</button>
-            <button class='hidden' id='shop-btn'>Back to shopping</button>
-          </div>
         </div>
 
       </article>
