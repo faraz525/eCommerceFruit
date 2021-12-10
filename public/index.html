@@ -10,8 +10,8 @@
   <body>
     <header>
       <div>
-
-        <h1>FN-Shopping!</h1>
+        <p>Account Balance: </p>
+        <p>$1231</p>
       </div>
       <nav>
         <input id='search-term' type='text'>
@@ -59,47 +59,56 @@
           <!-- view where products will get loaded into  -->
           <section id="home" class="view-border gridLayout hidden">
             <div class="product">
-              <img src="img/wheat.jpg" alt="https://pxhere.com/en/photo/1593115">
+              <div class="hover-div">
+                <div class="hover-text">Remove from cart</div>
+              </div>
+              <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
               <div>
-                <div id="labels">
-                  <h3>wheat</h3>
-                  <p>Seller:</p>
-                  <p>Joe Mama</p>
+                <div class="labels">
+                  <h3 class="product-name">barley</h3>
+                  <p class="seller-tag">Seller:</p>
+                  <p class="product-seller">Faraz Chadeshi</p>
                 </div>
-                <div id="values">
-                  <p>$20.00</p>
-                  <p>Avaliable:</p>
-                  <p>50</p>
+                <div class="values">
+                  <p class="product-money">$420.69</p>
+                  <p class="avaliable-tag">Avaliable:</p>
+                  <p class="product-amount">1000</p>
                 </div>
               </div>
             </div>
             <div class="product">
+              <div class="hover-div">
+                <div class="hover-text">Remove from cart</div>
+              </div>
               <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
               <div>
-                <div id="labels">
-                  <h3>barley</h3>
-                  <p>Seller:</p>
-                  <p>Faraz Chadeshi</p>
+                <div class="labels">
+                  <h3 class="product-name">barley</h3>
+                  <p class="seller-tag">Seller:</p>
+                  <p class="product-seller">Faraz Chadeshi</p>
                 </div>
-                <div id="values">
-                  <p>$420.69</p>
-                  <p>Avaliable:</p>
-                  <p>1000</p>
+                <div class="values">
+                  <p class="product-money">$420.69</p>
+                  <p class="avaliable-tag">Avaliable:</p>
+                  <p class="product-amount">1000</p>
                 </div>
               </div>
             </div>
             <div class="product">
+              <div class="hover-div">
+                <div class="hover-text">Remove from cart</div>
+              </div>
               <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
               <div>
-                <div id="labels">
-                  <h3>barley</h3>
-                  <p>Seller:</p>
-                  <p>Faraz Chadeshi</p>
+                <div class="labels">
+                  <h3 class="product-name">barley</h3>
+                  <p class="seller-tag">Seller:</p>
+                  <p class="product-seller">Faraz Chadeshi</p>
                 </div>
-                <div id="values">
-                  <p>$420.69</p>
-                  <p>Avaliable:</p>
-                  <p>1000</p>
+                <div class="values">
+                  <p class="product-money">$420.69</p>
+                  <p class="avaliable-tag">Avaliable:</p>
+                  <p class="product-amount">1000</p>
                 </div>
               </div>
             </div>
@@ -116,12 +125,12 @@
                 <div>
                   <div class="labels">
                     <h3 class="product-name">barley</h3>
-                    <p>Seller:</p>
+                    <p class="seller-tag">Seller:</p>
                     <p class="product-seller">Faraz Chadeshi</p>
                   </div>
                   <div class="values">
-                    <p class="product-money">$420.34369</p>
-                    <p>Avaliable:</p>
+                    <p class="product-money">$420.69</p>
+                    <p class="avaliable-tag">Avaliable:</p>
                     <p class="product-amount">1000</p>
                   </div>
                 </div>
@@ -134,24 +143,282 @@
           </section>
 
           <!-- view of all transactions made on the account-->
-          <section id="account">
+          <section id="account" class="view-border hidden">
+            <section class="transaction-container">
+              <div>
+                <p>Transaction ID:</p>
+                <p>123412</p>
+              </div>
+              <div>
+                <p>Total Sum:</p>
+                <p>$1234123</p>
+              </div>
+              <hr>
+              <div class="transaction-list">
+                <div class="product">
+                  <div class="hover-div">
+                    <div class="hover-text">Remove from cart</div>
+                  </div>
+                  <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
+                  <div>
+                    <div class="labels">
+                      <h3 class="product-name">barley</h3>
+                      <p class="seller-tag">Seller:</p>
+                      <p class="product-seller">Faraz Chadeshi</p>
+                    </div>
+                    <div class="values">
+                      <p class="product-money">$420.69</p>
+                      <p class="avaliable-tag">Avaliable:</p>
+                      <p class="product-amount">1000</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="product">
+                  <div class="hover-div">
+                    <div class="hover-text">Remove from cart</div>
+                  </div>
+                  <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
+                  <div>
+                    <div class="labels">
+                      <h3 class="product-name">barley</h3>
+                      <p class="seller-tag">Seller:</p>
+                      <p class="product-seller">Faraz Chadeshi</p>
+                    </div>
+                    <div class="values">
+                      <p class="product-money">$420.69</p>
+                      <p class="avaliable-tag">Avaliable:</p>
+                      <p class="product-amount">1000</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="product">
+                  <div class="hover-div">
+                    <div class="hover-text">Remove from cart</div>
+                  </div>
+                  <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
+                  <div>
+                    <div class="labels">
+                      <h3 class="product-name">barley</h3>
+                      <p class="seller-tag">Seller:</p>
+                      <p class="product-seller">Faraz Chadeshi</p>
+                    </div>
+                    <div class="values">
+                      <p class="product-money">$420.69</p>
+                      <p class="avaliable-tag">Avaliable:</p>
+                      <p class="product-amount">1000</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="product">
+                  <div class="hover-div">
+                    <div class="hover-text">Remove from cart</div>
+                  </div>
+                  <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
+                  <div>
+                    <div class="labels">
+                      <h3 class="product-name">barley</h3>
+                      <p class="seller-tag">Seller:</p>
+                      <p class="product-seller">Faraz Chadeshi</p>
+                    </div>
+                    <div class="values">
+                      <p class="product-money">$420.69</p>
+                      <p class="avaliable-tag">Avaliable:</p>
+                      <p class="product-amount">1000</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="transaction-container">
+              <div>
+                <p>Transaction ID:</p>
+                <p>123412</p>
+              </div>
+              <div>
+                <p>Total Sum:</p>
+                <p>$1234123</p>
+              </div>
+              <hr>
+              <div class="transaction-list">
+                <div class="product">
+                  <div class="hover-div">
+                    <div class="hover-text">Remove from cart</div>
+                  </div>
+                  <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
+                  <div>
+                    <div class="labels">
+                      <h3 class="product-name">barley</h3>
+                      <p class="seller-tag">Seller:</p>
+                      <p class="product-seller">Faraz Chadeshi</p>
+                    </div>
+                    <div class="values">
+                      <p class="product-money">$420.69</p>
+                      <p class="avaliable-tag">Avaliable:</p>
+                      <p class="product-amount">1000</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="product">
+                  <div class="hover-div">
+                    <div class="hover-text">Remove from cart</div>
+                  </div>
+                  <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
+                  <div>
+                    <div class="labels">
+                      <h3 class="product-name">barley</h3>
+                      <p class="seller-tag">Seller:</p>
+                      <p class="product-seller">Faraz Chadeshi</p>
+                    </div>
+                    <div class="values">
+                      <p class="product-money">$420.69</p>
+                      <p class="avaliable-tag">Avaliable:</p>
+                      <p class="product-amount">1000</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="product">
+                  <div class="hover-div">
+                    <div class="hover-text">Remove from cart</div>
+                  </div>
+                  <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
+                  <div>
+                    <div class="labels">
+                      <h3 class="product-name">barley</h3>
+                      <p class="seller-tag">Seller:</p>
+                      <p class="product-seller">Faraz Chadeshi</p>
+                    </div>
+                    <div class="values">
+                      <p class="product-money">$420.69</p>
+                      <p class="avaliable-tag">Avaliable:</p>
+                      <p class="product-amount">1000</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="product">
+                  <div class="hover-div">
+                    <div class="hover-text">Remove from cart</div>
+                  </div>
+                  <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
+                  <div>
+                    <div class="labels">
+                      <h3 class="product-name">barley</h3>
+                      <p class="seller-tag">Seller:</p>
+                      <p class="product-seller">Faraz Chadeshi</p>
+                    </div>
+                    <div class="values">
+                      <p class="product-money">$420.69</p>
+                      <p class="avaliable-tag">Avaliable:</p>
+                      <p class="product-amount">1000</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section class="transaction-container">
+              <div>
+                <p>Transaction ID:</p>
+                <p>123412</p>
+              </div>
+              <div>
+                <p>Total Sum:</p>
+                <p>$1234123</p>
+              </div>
+              <hr>
+              <div class="transaction-list">
+                <div class="product">
+                  <div class="hover-div">
+                    <div class="hover-text">Remove from cart</div>
+                  </div>
+                  <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
+                  <div>
+                    <div class="labels">
+                      <h3 class="product-name">barley</h3>
+                      <p class="seller-tag">Seller:</p>
+                      <p class="product-seller">Faraz Chadeshi</p>
+                    </div>
+                    <div class="values">
+                      <p class="product-money">$420.69</p>
+                      <p class="avaliable-tag">Avaliable:</p>
+                      <p class="product-amount">1000</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="product">
+                  <div class="hover-div">
+                    <div class="hover-text">Remove from cart</div>
+                  </div>
+                  <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
+                  <div>
+                    <div class="labels">
+                      <h3 class="product-name">barley</h3>
+                      <p class="seller-tag">Seller:</p>
+                      <p class="product-seller">Faraz Chadeshi</p>
+                    </div>
+                    <div class="values">
+                      <p class="product-money">$420.69</p>
+                      <p class="avaliable-tag">Avaliable:</p>
+                      <p class="product-amount">1000</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="product">
+                  <div class="hover-div">
+                    <div class="hover-text">Remove from cart</div>
+                  </div>
+                  <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
+                  <div>
+                    <div class="labels">
+                      <h3 class="product-name">barley</h3>
+                      <p class="seller-tag">Seller:</p>
+                      <p class="product-seller">Faraz Chadeshi</p>
+                    </div>
+                    <div class="values">
+                      <p class="product-money">$420.69</p>
+                      <p class="avaliable-tag">Avaliable:</p>
+                      <p class="product-amount">1000</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="product">
+                  <div class="hover-div">
+                    <div class="hover-text">Remove from cart</div>
+                  </div>
+                  <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
+                  <div>
+                    <div class="labels">
+                      <h3 class="product-name">barley</h3>
+                      <p class="seller-tag">Seller:</p>
+                      <p class="product-seller">Faraz Chadeshi</p>
+                    </div>
+                    <div class="values">
+                      <p class="product-money">$420.69</p>
+                      <p class="avaliable-tag">Avaliable:</p>
+                      <p class="product-amount">1000</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
           </section>
 
           <!-- view of a singular product-->
-          <section id="single" class="view-border hidden">
+          <section id="single" class="view-border">
             <p>What would you like to do with this product?</p>
             <div class="product">
+              <div class="hover-div">
+                <div class="hover-text">Remove from cart</div>
+              </div>
               <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
               <div>
-                <div id="labels">
-                  <h3>barley</h3>
-                  <p>Seller:</p>
-                  <p>Faraz Chadeshi</p>
+                <div class="labels">
+                  <h3 class="product-name">barley</h3>
+                  <p class="seller-tag">Seller:</p>
+                  <p class="product-seller">Faraz Chadeshi</p>
                 </div>
-                <div id="values">
-                  <p>$420.69</p>
-                  <p>Avaliable:</p>
-                  <p>1000</p>
+                <div class="values">
+                  <p class="product-money">$420.69</p>
+                  <p class="avaliable-tag">Avaliable:</p>
+                  <p class="product-amount">1000</p>
                 </div>
               </div>
             </div>
