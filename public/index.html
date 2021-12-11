@@ -50,14 +50,10 @@
             <br>
             <label><input type="radio" name="itemsView" value="list">List View</label>
             <h3>Filters:</h3>
-            <label><input type="checkbox" name="itemsFilter" value="wheat" checked>Wheat</label>
-            <br>
-            <label><input type="checkbox" name="itemsFilter" value="barley" checked>Barley</label>
-            <br>
-            <label><input type="checkbox" name="itemsFilter" value="corn" checked>Corn</label>
-            <br>
-            <label><input type="checkbox" name="itemsFilter" value="rice" checked>Rice</label>
-            <br>
+            <label><input type="checkbox" name="itemsFilter" value="wheat" checked>Wheat</label><br>
+            <label><input type="checkbox" name="itemsFilter" value="barley" checked>Barley</label><br>
+            <label><input type="checkbox" name="itemsFilter" value="corn" checked>Corn</label><br>
+            <label><input type="checkbox" name="itemsFilter" value="rice" checked>Rice</label><br>
             <label><input type="checkbox" name="itemsFilter" value="maize" checked>Maize</label>
             <br>
             <button id="filter-btn">Update filters</button>
@@ -65,7 +61,7 @@
 
           <!-- view where products will get loaded into  -->
           <section id="home" class="view-border gridLayout hidden">
-            <div class="product">
+            <article class="product">
               <div class="product-hover-div">
                 <div class="product-hover-text">Remove from cart</div>
               </div>
@@ -82,7 +78,7 @@
                   <p class="product-amount">1000</p>
                 </div>
               </div>
-            </div>
+            </article>
             <div class="product">
               <div class="product-hover-div">
                 <div class="product-hover-text">Remove from cart</div>
@@ -203,6 +199,7 @@
                 </div>
               </div>
             </div>
+            <p id="single-description">Fine sourced plant that gets you very strong!</p>
             <form>
               <label for='count'>count: </label>
               <input type='number' min="1" id='count' name='count' value="1" required>
@@ -221,5 +218,8 @@
         </section>
       </article>
     </main>
+    <footer>
+      <p>All images made avaliable with a CC0 public domain liscence</p>
+    </footer>
   </body>
 </html>

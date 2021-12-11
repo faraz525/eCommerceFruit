@@ -54,6 +54,14 @@ h1 {
   margin-right: auto;
 }
 
+/* footer styles */
+footer {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  text-align: center;
+}
+
 /* universal properties */
 button {
   font-weight: bold;
@@ -139,7 +147,7 @@ button:hover {
 #home {
   display: flex;
   box-sizing: content-box;
-  height: 520px;
+  height: 420px;
   min-width: 200px;
   overflow-y: scroll;
   overflow: -moz-scrollbars-none;
@@ -179,7 +187,7 @@ button:hover {
   margin: 0px auto;
 }
 
-/* transaction view */
+/* history view */
 #history {
   width: 40vw;
   padding: 5px;
@@ -188,7 +196,7 @@ button:hover {
   display: flex;
   flex-direction: column;
   box-sizing: content-box;
-  height: 520px;
+  height: 420px;
   min-width: 200px;
   overflow-y: scroll;
   overflow: -moz-scrollbars-none;
@@ -246,6 +254,12 @@ button:hover {
 
 #single > p {
   text-align: center;
+}
+
+#single #single-description {
+  border-color: #3B7080;
+  border-style: solid;
+  border-width: 1px;
 }
 
 #single form {

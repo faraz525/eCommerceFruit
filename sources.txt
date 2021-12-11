@@ -1,0 +1,31 @@
+grains:
+triticale: https://pxhere.com/fr/photo/1065989
+quinoa: https://pixabay.com/photos/quinoa-grains-seeds-edible-food-497210/
+oat: https://pixnio.com/food-and-drink/healthy-fiber-seed-cereal-corn-dry-nutrition-oat
+rice: https://www.publicdomainpictures.net/en/view-image.php?image=230149&picture=grains-of-rice-background
+corn: https://pxhere.com/en/photo/1035187
+barley: https://pxhere.com/en/photo/1025912
+wheat: https://www.pexels.com/photo/wheat-kernels-54084/
+
+fruits:
+blueberry: https://www.publicdomainpictures.net/en/view-image.php?image=3419&picture=blueberry&large=1
+kiwi: https://www.pexels.com/photo/green-kiwi-fruit-51312/
+grape: https://pixnio.com/flora-plants/fruits/grapes-fruit-pictures/green-grape-fruit
+mango: https://pixabay.com/photos/mango-fruit-tropical-green-559280/
+pear: https://pxhere.com/en/photo/1324021
+strawberry: https://pxhere.com/en/photo/1101492
+orange: https://www.publicdomainpictures.net/en/view-image.php?image=8790&picture=orange
+banana: https://www.publicdomainpictures.net/en/view-image.php?image=69706&picture=&jazyk=SE
+apple: https://www.pexels.com/photo/red-and-orange-apple-fruit-102104/
+
+vegetables:
+carrots: https://www.publicdomainpictures.net/en/view-image.php?image=172732&picture=carrot
+celery: https://publicdomainpictures.net/en/view-image.php?picture=celery&image=616&large=1
+lettuce: https://www.publicdomainpictures.net/en/view-image.php?image=209673&picture=salad-variety-lettuce
+kale: https://www.publicdomainpictures.net/en/view-image.php?image=68178&picture=cabbage
+cucumber: https://www.publicdomainpictures.net/en/view-image.php?image=317583&picture=sliced-cucumber-close-up
+broccoli: https://www.publicdomainpictures.net/en/view-image.php?image=197901&picture=broccoli-isolated-on-white
+onion: https://www.publicdomainpictures.net/en/view-image.php?image=28742&picture=onion-isolated
+potato: https://www.publicdomainpictures.net/en/view-image.php?image=131480&picture=potato-in-3d
+pepper: https://pxhere.com/en/photo/806353
+
