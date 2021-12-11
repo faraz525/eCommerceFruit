@@ -21,7 +21,7 @@
   * handling searches, and handling new yips.
   */
   function init() {
-    reqAllYips();
+    reqAllitems();
 
     let searchTerm = id("search-term");
     searchTerm.addEventListener("input", searchCheck);
@@ -99,13 +99,13 @@
   /**
   * Fetches infromation from the API about all of the yips in the database
   */
-  async function reqAllYips() {
-    let url = BASE_URL + "yips";
+  async function reqAllitems() {
+    let url = "shopping/shop";
     try {
       let res = await fetch(url);
       await statusCheck(res);
       res = await res.json();
-      processAllYips(res);
+      processAllitems(res);
     } catch (err) {
       errorHandler(err);
     }
@@ -115,14 +115,15 @@
   * Adds all the yips in the database, as articles, into the home view container
   * @param {JSON} responseData json representation of all yips in the database
   */
-  function processAllYips(responseData) {
-    responseData = responseData.yips;
-    let container = id("home");
-    let len = Object.keys(responseData).length;
-    for (let i = 0; i < len; i++) {
-      let curArticle = genCurYipArticle(responseData[i]);
-      container.appendChild(curArticle);
-    }
+  function processAllitems(responseData) {
+    console.log(responseData);
+    // responseData = responseData.yips;
+    // let container = id("home");
+    // let len = Object.keys(responseData).length;
+    // for (let i = 0; i < len; i++) {
+    //   let curArticle = genCurYipArticle(responseData[i]);
+    //   container.appendChild(curArticle);
+    // }
   }
 
   /**
