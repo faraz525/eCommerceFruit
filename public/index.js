@@ -32,8 +32,11 @@
     let homeBtn = id("home-btn");
     homeBtn.addEventListener("click", goHome);
 
-    let yipBtn = id("yip-btn");
-    yipBtn.addEventListener("click", goNew);
+    let cartBtn = id("cart-btn");
+    cartBtn.addEventListener("click", goCart);
+
+    let accountBtn = id("account-btn");
+    accountBtn.addEventListener("click", goAccount);
 
     let yipForm = qs("#new form");
     yipForm.addEventListener("submit", function(e) {
@@ -47,7 +50,7 @@
   * @param {String} viewName the name of the view to show
   */
   function showView(viewName) {
-    let sections = qsa('#yipper-data section');
+    let sections = qsa('#overall .view-border');
     for (let i = 0; i < sections.length; i++) {
       if (sections[i].id === viewName) {
         sections[i].classList.remove('hidden');
@@ -72,6 +75,7 @@
     clearSearch();
     showYips();
     showView('home');
+    id("visuals").classList.remove("hidden");
   }
 
   /**
@@ -85,11 +89,19 @@
   }
 
   /**
-  * Shows the new view, ensuring that the search bar is cleared
+  * Shows the cart view, ensuring that the search bar is cleared
   */
-  function goNew() {
+  function goCart() {
     clearSearch();
-    showView("new");
+    showView("cart");
+  }
+
+  /**
+  * Shows the cart view, ensuring that the search bar is cleared
+  */
+   function goAccount() {
+    clearSearch();
+    showView("account");
   }
 
   /**
