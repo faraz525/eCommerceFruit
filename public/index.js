@@ -94,6 +94,7 @@
      console.log("this is a plea for help");
     clearSearch();
     showView("history");
+    console.log("If God exists, then why do I not feel his mercy?")
   }
 
   /**
