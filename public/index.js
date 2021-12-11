@@ -90,14 +90,6 @@
   /**
   * Shows the cart view, ensuring that the search bar is cleared
   */
-  function goCart() {
-    clearSearch();
-    showView("cart");
-  }
-
-  /**
-  * Shows the cart view, ensuring that the search bar is cleared
-  */
    function goHistory() {
      console.log("this is a plea for help");
     clearSearch();
