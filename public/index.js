@@ -132,15 +132,17 @@
   * @returns {article} an article containing all of the appropriate information of the yip
   */
   function genCurProductArticle(curProduct) {
+    console.log(curProduct);
     let artcl = gen("article");
     let igIcn = gen("img");
-    let dYpCnt = genYipContent(curYip);
-    let dMeta = genYipMeta(curYip);
+    let dPrdctHvr = genProductHover(curProduct);
+    let dPrdctLbl = genProductLabel(curProduct);
+    let dPrdctVal = genProductValue(curProduct);
 
-    artcl.classList.add('card');
+    artcl.classList.add('product');
     artcl.id = curYip.id;
-    igIcn.src = "img/" + nameToImgName(curYip.name) + ".png";
-    igIcn.alt = curYip.name + " icon";
+    igIcn.src = "img/" + curProduct.name + ".jpg";
+    igIcn.alt = curProduct.name + "";
 
     artcl.appendChild(igIcn);
     artcl.appendChild(dYpCnt);
