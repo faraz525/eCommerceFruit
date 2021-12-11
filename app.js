@@ -14,20 +14,25 @@ const sqlite = require('sqlite');
 //Primary endpoint that allows the front end to request data about all the items on the website.
 app.get('/shopping/shop', async function(req, res) {
   try{
+    console.log("whats up");
     let db = await getDBConnection();
+    console.log("whats up2 ");
     if (req.query['search']) {
       let val = "'%" + req.query['search'] + "%'";
       //we can have an array of items that match up the item on client side js
-      let sql = 'SELECT id FROM index WHERE item LIKE ' + val;
+      let sql = 'SELECT id FROM listing WHERE item LIKE ' + val;
       let ex1 = await db.all(sql);
       await db.close();
       res.json(ex1);
     } else {
-      let ex1 = await db.all('SELECT * FROM index ORDER BY date DESC');
+      console.log("whats up3");
+      let ex1 = await db.all('SELECT * FROM listing');
+      console.log("whats up4");
       db.close();
       res.json(ex1);
     }
   } catch (err) {
+    console.log(err);
     res.type('text');
     res.status(500).send('An error occurred on the server. Try again later.');
   }
@@ -94,13 +99,71 @@ app.post('/login', async function(req, res) {
   }
 });
 
+/*
+ * This endpoint updates the backend with the new yip submitted by the client. Returns JSON
+ * data back to the front end in the manner specified through the documentation.
+ */
+app.post('/signup', async function(req, res) {
+  try {
+    let db = await getDBConnection();
+    let name = req.body.name;
+    let password = req.body.password;
+    let email = req.body.email;
+    if (name.length < 1 || password.length < 1 || email < 1) {
+      res.type('text');
+      res.status(400).send('Missing one or more of the required params.');
+      return;
+    }
+    let ex1 = await db.all('SELECT id FROM users WHERE username = "' + name + '"');
+    if (ex1.length > 1) {
+      res.type('text');
+      res.status(400).send('Username already taken');
+      return;
+    } else {
+      let sql = 'INSERT INTO users (username, password, email, monies) VALUES(?,?,?,?)';
+      let ex2 = await db.run(sql, [name, password, email, 1000]);
+    }
+    res.type('text');
+    res.send("success");
+  } catch (err) {
+    res.type('text');
+    res.status(400).send('Missing one or more of the required params.');
+  }
+});
+
 //INSERT INTO indexed (user, item, price, quantity)
 //VALUES ("3", "2", "10", "250");
+//also have to increase the user money.
 
 app.post('/shopping/sell', async function(req, res) {
   try {
     let db = await getDBConnection();
-    let user = req.body.name;
+    let user = req.body.name; //int for user
+    let item = req.body.item; //int for item
+    let price = req.body.price; //int for price they are selling
+    let quantity = req.body.quantity; //int for the quantity
+    let total = price * quantity;
+    if (user.length < 1 || item.length < 1 || price.length < 1 || quantity < 1) {
+      res.type('text');
+      res.status(400).send('Missing one or more of the required params.');
+      return;
+    }
+    let sql = 'INSERT INTO indexed (user, item, price, quantity) VALUES(?, ?, ?, ?)';
+    let ex1 = await db.run(sql, [user, item, price, quantity]);
+    let sql2 = 'UPDATE users SET monies = monies + "' + total + '" WHERE username = ' + user;
+    let ex2 = await db.run(sql2);
+    res.json(ex2);
+  } catch (err) {
+    res.type('text');
+    res.status(400).send('Missing one or more of the required params.');
+  }
+});
+
+//buy endpoint
+app.post('/shopping/buy', async function(req, res) {
+  try {
+    let db = await getDBConnection();
+    let id = req.body.id; //int id for the product they are buying
     let item = req.body.item;
     let price = req.body.price;
     let quantity = req.body.quantity;
