@@ -11,7 +11,7 @@
     <header>
       <div>
         <p>Account Balance: </p>
-        <p id="account-balance">$1231</p>
+        <p id="account-balance" class="currSign">1231</p>
       </div>
       <nav>
         <select name="searchType" id="searchType">
@@ -66,8 +66,8 @@
           <!-- view where products will get loaded into  -->
           <section id="home" class="view-border gridLayout hidden">
             <div class="product">
-              <div class="hover-div">
-                <div class="hover-text">Remove from cart</div>
+              <div class="product-hover-div">
+                <div class="product-hover-text">Remove from cart</div>
               </div>
               <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
               <div>
@@ -77,15 +77,15 @@
                   <p class="product-seller">Faraz Chadeshi</p>
                 </div>
                 <div class="product-values">
-                  <p class="product-money">$420.69</p>
+                  <p class="product-money currSign">420.69</p>
                   <p class="product-amount-tag">Avaliable:</p>
                   <p class="product-amount">1000</p>
                 </div>
               </div>
             </div>
             <div class="product">
-              <div class="hover-div">
-                <div class="hover-text">Remove from cart</div>
+              <div class="product-hover-div">
+                <div class="product-hover-text">Remove from cart</div>
               </div>
               <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
               <div>
@@ -95,15 +95,15 @@
                   <p class="product-seller">Faraz Chadeshi</p>
                 </div>
                 <div class="product-values">
-                  <p class="product-money">$420.69</p>
+                  <p class="product-money currSign">420.69</p>
                   <p class="product-amount-tag">Avaliable:</p>
                   <p class="product-amount">1000</p>
                 </div>
               </div>
             </div>
             <div class="product">
-              <div class="hover-div">
-                <div class="hover-text">Remove from cart</div>
+              <div class="product-hover-div">
+                <div class="product-hover-text">Remove from cart</div>
               </div>
               <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
               <div>
@@ -113,7 +113,7 @@
                   <p class="product-seller">Faraz Chadeshi</p>
                 </div>
                 <div class="product-values">
-                  <p class="product-money">$420.69</p>
+                  <p class="product-money currSign">420.69</p>
                   <p class="product-amount-tag">Avaliable:</p>
                   <p class="product-amount">1000</p>
                 </div>
@@ -125,8 +125,8 @@
           <section id="cart" class="view-border hidden">
             <div id="cart-bag">
               <div class="product">
-                <div class="hover-div">
-                  <div class="hover-text">Remove from cart</div>
+                <div class="product-hover-div">
+                  <div class="product-hover-text">Remove from cart</div>
                 </div>
                 <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
                 <div>
@@ -136,7 +136,7 @@
                     <p class="product-seller">Faraz Chadeshi</p>
                   </div>
                   <div class="values">
-                    <p class="product-money">$420.69</p>
+                    <p class="product-money currSign">420.69</p>
                     <p class="avaliable-tag">Avaliable:</p>
                     <p class="product-amount">1000</p>
                   </div>
@@ -144,7 +144,7 @@
               </div>
             </div>
             <p>Your total purchase will cost:</p>
-            <p id="cart-sum-price"> $0123</p>
+            <p id="cart-sum-price" class="currSign">0123</p>
             <button id="buy-cart-btn">Confirm Purchase</button>
             <p id="purchase-response">Order succesfull, confirmation number 123124</p>
           </section>
@@ -158,12 +158,12 @@
               </div>
               <div>
                 <p>Total Sum:</p>
-                <p>$1234123</p>
+                <p class="currSign">1234123</p>
               </div>
               <hr>
               <div class="product">
-                <div class="hover-div">
-                  <div class="hover-text">Remove from cart</div>
+                <div class="product-hover-div">
+                  <div class="product-hover-text">Remove from cart</div>
                 </div>
                 <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
                 <div>
@@ -173,7 +173,7 @@
                     <p class="product-seller">Faraz Chadeshi</p>
                   </div>
                   <div class="product-values">
-                    <p class="product-money">$420.69</p>
+                    <p class="product-money currSign">420.69</p>
                     <p class="product-amount-tag">Avaliable:</p>
                     <p class="product-amount">1000</p>
                   </div>
@@ -186,8 +186,8 @@
           <section id="single" class="view-border hidden">
             <p id = "single-title">How many of this product would you like to buy?</p>
             <div class="product">
-              <div class="hover-div">
-                <div class="hover-text">Remove from cart</div>
+              <div class="product-hover-div">
+                <div class="product-hover-text">Remove from cart</div>
               </div>
               <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
               <div>
@@ -197,7 +197,7 @@
                   <p class="product-seller">Faraz Chadeshi</p>
                 </div>
                 <div class="product-values">
-                  <p class="product-money">$420.69</p>
+                  <p class="product-money currSign">420.69</p>
                   <p class="product-amount-tag">Avaliable:</p>
                   <p class="product-amount">1000</p>
                 </div>
@@ -205,7 +205,7 @@
             </div>
             <form>
               <label for='count'>count: </label>
-              <input type='number' min="0" id='count' name='count' required>
+              <input type='number' min="1" id='count' name='count' value="1" required>
               <button id="single-buy-btn">Confirm</button>
               <button id="single-sell-btn">Sell</button>
             </form>
@@ -215,19 +215,10 @@
             </div>
             <div>
               <p>Sum value:</p>
-              <p id="single-sum-price">$21</p>
+              <p id="single-sum-price" class="currSign">21</p>
             </div>
             <button id="single-submit">Submit</button>
         </section>
-      </article>
-
-        <!-- may not need this-->
-        <section id="sell">
-        </section>
-
-        <div id='item-data'>
-        </div>
-
       </article>
     </main>
   </body>
