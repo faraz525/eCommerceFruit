@@ -12,7 +12,7 @@
 
 (function() {
 
-  let BASE_URL = "/yipper/";
+  let BASE_URL = "/shopping/";
 
   window.addEventListener("load", init);
 
@@ -101,7 +101,7 @@
   * Fetches infromation from the API about all of the yips in the database
   */
   async function reqAllitems() {
-    let url = "shopping/shop";
+    let url = BASE_URL + "shop";
     try {
       let res = await fetch(url);
       await statusCheck(res);
@@ -118,13 +118,12 @@
   */
   function processAllitems(responseData) {
     console.log(responseData);
-    // responseData = responseData.yips;
-    // let container = id("home");
-    // let len = Object.keys(responseData).length;
-    // for (let i = 0; i < len; i++) {
-    //   let curArticle = genCurYipArticle(responseData[i]);
-    //   container.appendChild(curArticle);
-    // }
+    let container = id("home");
+    let len = Object.keys(responseData).length;
+    for (let i = 0; i < len; i++) {
+      let curArticle = genCurProductArticle(responseData[i]);
+      container.appendChild(curArticle);
+    }
   }
 
   /**
@@ -132,7 +131,7 @@
   * @param {JSON} curYip Current yip to use
   * @returns {article} an article containing all of the appropriate information of the yip
   */
-  function genCurYipArticle(curYip) {
+  function genCurProductArticle(curProduct) {
     let artcl = gen("article");
     let igIcn = gen("img");
     let dYpCnt = genYipContent(curYip);
