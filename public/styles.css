@@ -27,6 +27,10 @@ header, nav {
   justify-content: space-around;
 }
 
+header nav select {
+  height: 40px;
+}
+
 header {
   background-color: #ADE25D;
   position: sticky;
@@ -56,7 +60,7 @@ button:hover {
   background-color: #E8E4E1;
 }
 
-h2 {
+h1 {
   width: fit-content;
   margin-left: auto;
   margin-right: auto;
@@ -71,8 +75,24 @@ h2 {
   border-color: #3A5743;
 }
 
+.currSign:before {
+  content: '$';
+}
+
 /* login styles */
-#login label {
+#login {
+  display: flex;
+  flex-direction: column;
+  width: 45vw;
+  margin: auto;
+}
+
+#login > label {
+  margin: 2px auto;
+  background-color: #fff39b;
+}
+
+#login form label {
   margin-top: 16px;
   margin-bottom: 6px;
 }
@@ -82,7 +102,6 @@ h2 {
   flex-direction: column;
   background-color: #CFFFB3;
   padding: 5px 17px 17px 17px;
-  width: 45vw;
   border-radius: 5px;
   margin: auto;
 }
@@ -157,7 +176,7 @@ h2 {
   margin: 0px auto 5px auto;
 }
 
-.product div, .product h3, .product p {
+.product div, .product h2, .product p {
   /* flexboxes are the hashmaps of css */
   display: flex;
 }
@@ -167,11 +186,11 @@ h2 {
   flex-direction: row;
 }
 
-.product .labels, .product .values {
+.product .product-labels, .product .product-values {
   flex-direction: column;
 }
 
-.product h3 {
+.product h2 {
   font-size: 25px;
   width: fit-content;
   margin-bottom: 8px;
@@ -182,47 +201,47 @@ h2 {
   border-color: #3A5743 ;
 }
 
-.product h3, .product .values .product-money {
+.product h2, .product .product-values .product-money {
   align-items: center;
   height: 30px;
   margin-top: 0px;
 }
 
-.product .values .product-money {
+.product .product-values .product-money {
   margin-bottom: 10px;
 }
 
-.product .values {
+.product .product-values {
   width: 30%;
 }
 
-.product .labels {
+.product .product-labels {
   width: 70%;
 }
 
-.product .labels p, .product .labels h3 {
+.product .product-labels p, .product .product-labels h2 {
   justify-content: left;
 }
 
-.product .values p {
+.product .product-values p {
   justify-content: right;
 }
 
-.product .labels p, .product .values .avaliable-tag, .product .values .product-amount {
+.product .product-labels p, .product .product-values .product-amount-tag, .product .product-values .product-amount {
   height: fit-content;
   margin: 0;
 }
 
-.product .labels .seller-tag, .product .values .avaliable-tag {
+.product .product-labels .product-seller-tag, .product .product-values .product-amount-tag {
   font-size: 11px;
 }
 
-.product .labels .product-seller, .product .values .product-amount {
+.product .product-labels .product-seller, .product .product-values .product-amount {
   font-size: 16px;
   word-break: break-all;
 }
 
-.product .labels .product-seller {
+.product .product-labels .product-seller {
   inline-size: 90%;
 }
 
@@ -272,9 +291,10 @@ h2 {
 }
 
 /* transaction view */
-#account {
-  width: 80vw;
+#history {
+  width: 40vw;
   padding: 5px;
+  margin: auto;
 
   display: flex;
   flex-direction: column;
@@ -286,9 +306,12 @@ h2 {
   padding: 20px;
 }
 
-#account .transaction-container {
+#history .transaction-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   height: fit-content;
-  min-width: 100%;
+  min-width: 90%;
 
   border: 4px;
   border-style: solid;
@@ -296,23 +319,25 @@ h2 {
   border-color: #3A5743;
 }
 
-#account > .transaction-container > div:not(.transaction-list) {
+#history hr {
+  width: 100%;
+}
+
+#history .transaction-container .product {
+  width: 250px;
+}
+
+#history > .transaction-container > div:not(.product) {
   padding: 5px;
 }
 
-#account > .transaction-container > div:not(.transaction-list), #account > .transaction-container > div:not(.transaction-list) > p {
+#history > .transaction-container > div:not(.product), #history > .transaction-container > div:not(.product) > p {
   margin: 0px;
 }
 
-#account > .transaction-container > div:not(.transaction-list), #account .transaction-list {
+#history > .transaction-container > div:not(.product) {
   display: flex;
   flex-direction: row;
-}
-
-#account .transaction-list {
-  box-sizing: content-box;
-  flex-wrap: nowrap;
-  overflow-x: scroll;
 }
 
 /* One item view */
@@ -334,10 +359,25 @@ h2 {
   text-align: center;
 }
 
-#single form div, #single div:nth-of-type(2) {
+#single form {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+#single > div:not(.product) {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+#single form, #single > div:not(.product) {
   display: flex;
   width: fit-content;
-  margin: 10px auto 0px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#single > div:not(.product) p {
+  margin: 0;
 }
 
 #single form input {
@@ -345,8 +385,12 @@ h2 {
   margin: 0px 20px 0px 10px;
 }
 
-#single div:nth-of-type(2) > p:nth-of-type(1) {
+#single > div:not(.product) > p:nth-of-type(1) {
   margin-right: 10px;
+}
+
+#single > button {
+  margin-left: 40%;
 }
 
 .hidden {

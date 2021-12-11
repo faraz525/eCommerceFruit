@@ -32,11 +32,8 @@
     let homeBtn = id("home-btn");
     homeBtn.addEventListener("click", goHome);
 
-    let cartBtn = id("cart-btn");
-    cartBtn.addEventListener("click", goCart);
-
-    let accountBtn = id("account-btn");
-    accountBtn.addEventListener("click", goAccount);
+    let historyBtn = id("history-btn");
+    historyBtn.addEventListener("click", goHistory);
 
     let yipForm = qs("#new form");
     yipForm.addEventListener("submit", function(e) {
@@ -53,6 +50,7 @@
     let sections = qsa('#overall .view-border');
     for (let i = 0; i < sections.length; i++) {
       if (sections[i].id === viewName) {
+        console.log(sections[i]);
         sections[i].classList.remove('hidden');
       } else {
         sections[i].classList.add('hidden');
@@ -76,6 +74,7 @@
     showYips();
     showView('home');
     id("visuals").classList.remove("hidden");
+    id("single").classList.remove("hidden");
   }
 
   /**
@@ -99,9 +98,10 @@
   /**
   * Shows the cart view, ensuring that the search bar is cleared
   */
-   function goAccount() {
+   function goHistory() {
+     console.log("this is a plea for help");
     clearSearch();
-    showView("account");
+    showView("history");
   }
 
   /**
