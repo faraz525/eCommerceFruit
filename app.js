@@ -11,12 +11,15 @@ const app = express();
 const sqlite3 = require('sqlite3');
 const sqlite = require('sqlite');
 const multer = require("multer");
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
 
 app.use(express.urlencoded({extended: true}));
 
 app.use(express.json());
 
 app.use(multer().none());
+const COOKIE_EXPIRATION = 1000 * 60 * 60 * 3;
 //Primary endpoint that allows the front end to request data about all the items on the website.
 //handle the situation where we need to be able to search for different types of info.
 
@@ -32,7 +35,7 @@ app.get('/shopping/shop', async function(req, res) {
       await db.close();
       res.json(ex1);
     } else {
-      let sql1 = 'SELECT users.username, product.name, listing.price, listing.quantity ';
+      let sql1 = 'SELECT users.username, product.name, listing.price, listing.quantity, listing.id ';
       let sql2 = 'FROM listing, users, product ';
       let sql3 = 'WHERE listing.user = users.id AND listing.item = product.id';
       let ex1 = await db.all(sql1 + sql2 + sql3);
@@ -137,6 +140,8 @@ app.post('/login', async function(req, res) {
     let db = await getDBConnection();
     let password = req.body.password;
     let name = req.body.user;
+    res.cookie("username", name);
+    res.cookie("password", password);
     if (name.length < 1 || password.length < 1) {
       res.type('text');
       res.status(400).send('Missing one or more of the required params.');
@@ -148,6 +153,9 @@ app.post('/login', async function(req, res) {
       res.status(400).send('Incorrect username or password');
       return;
     }
+    let id = await getSessionId();
+    await setSessionId(id, name);
+    res.cookie('sessionid', id, {expires: new Date(Date.now() + COOKIE_EXPIRATION)});
     res.json(ex1);
   } catch (err) {
     res.type('text');
@@ -254,6 +262,48 @@ app.post('/shopping/buy', async function(req, res) {
     res.status(400).send('Missing one or more of the required params.');
   }
 });
+
+/**
+ * Sets the session id in the database to the given one for the given user.
+ * @param {string} id - The Session id to set
+ * @param {string} user - The username of the person to set the id for
+ */
+ async function setSessionId(id, user) {
+  let query = 'UPDATE users SET sessionId = ? WHERE username = ?';
+  let db = await getDBConnection();
+  await db.all(query, [id, user]);
+  await db.close();
+}
+
+// Logs a user out by expiring their cookie.
+app.post('/logout', function(req, res) {
+  res.type('text');
+  let id = req.cookies['sessionid'];
+  if (id) {
+    res.clearCookie('sessionid');
+    res.send('Successfully logged out!');
+  } else {
+    res.send('Already logged out.');
+  }
+});
+
+/**
+ * Generates an unused sessionid and returns it to the user.
+ * @returns {string} - The random session id.
+ */
+ async function getSessionId() {
+  let query = 'SELECT sessionId FROM users WHERE sessionid = ?';
+  let id;
+  let db = await getDBConnection();
+  do {
+    // This wizardry comes from https://gist.github.com/6174/6062387
+    id = Math.random().toString(36)
+      .substring(2, 15) + Math.random().toString(36)
+      .substring(2, 15);
+  } while (((await db.all(query, id)).length) > 0);
+  await db.close();
+  return id;
+}
 
 /**
  * Helper function to make an instance of the db and return it back to whatever requests.

@@ -22,7 +22,8 @@
   */
   function init() {
     reqAllitems();
-
+    let id = window.
+    console.log(id);
     let searchTerm = id("search-term");
     searchTerm.addEventListener("input", searchCheck);
 
@@ -35,13 +36,41 @@
     let historyBtn = id("history-btn");
     historyBtn.addEventListener("click", goHistory);
 
-    let yipForm = qs("#new form");
-    yipForm.addEventListener("submit", function(e) {
-      e.preventDefault();
-      reqNewYip();
+    console.log(qs('#login form'));
+    qs('#login form').addEventListener('submit', (ev) => {
+      ev.preventDefault();
+
+      loginUser();
     });
   }
 
+  async function loginUser() {
+
+    let url = '/login'
+    let user = id('name').value;
+    let password = id('password').value;
+    let params = new FormData();
+    params.append('user', user);
+    params.append('password', password);
+
+    try {
+      let res = await fetch(url, {method: 'POST', body: params});
+      await statusCheck(res);
+      res = await res.json();
+      processLogin(res);
+    } catch (err) {
+      errorHandler(err);
+    }
+  }
+
+  //NEED TO DO COOKIES HERE
+  function processLogin(res) {
+    if(res.length > 0) {
+      console.log("Success");
+      goHome();
+
+    }
+  }
   /**
   * Shows a requested view, while hiding all other views
   * @param {String} viewName the name of the view to show
