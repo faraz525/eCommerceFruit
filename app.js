@@ -10,24 +10,32 @@ const express = require('express');
 const app = express();
 const sqlite3 = require('sqlite3');
 const sqlite = require('sqlite');
+const multer = require("multer");
 
+app.use(express.urlencoded({extended: true}));
+
+app.use(express.json());
+
+app.use(multer().none());
 //Primary endpoint that allows the front end to request data about all the items on the website.
+//handle the situation where we need to be able to search for different types of info.
+
+//SELECT users.username, product.name, listing.price, listing.quantity FROM listing, users, product WHERE listing.user = users.id AND listing.item = product.id
 app.get('/shopping/shop', async function(req, res) {
   try{
-    console.log("whats up");
     let db = await getDBConnection();
-    console.log("whats up2 ");
     if (req.query['search']) {
       let val = "'%" + req.query['search'] + "%'";
-      //we can have an array of items that match up the item on client side js
+      //we can have an array of items that match up the item on client side js and just grab em
       let sql = 'SELECT id FROM listing WHERE item LIKE ' + val;
       let ex1 = await db.all(sql);
       await db.close();
       res.json(ex1);
     } else {
-      console.log("whats up3");
-      let ex1 = await db.all('SELECT * FROM listing');
-      console.log("whats up4");
+      let sql1 = 'SELECT users.username, product.name, listing.price, listing.quantity ';
+      let sql2 = 'FROM listing, users, product ';
+      let sql3 = 'WHERE listing.user = users.id AND listing.item = product.id';
+      let ex1 = await db.all(sql1 + sql2 + sql3);
       db.close();
       res.json(ex1);
     }
@@ -45,24 +53,51 @@ app.get('/shopping/shop', async function(req, res) {
 // param will be the id of the card
 
 // return a specific index id data for process.
+
 app.get('/shopping/product/:product', async function(req, res) {
   try {
     let db = await getDBConnection();
-    let product = "'" + req.params.user + "'";
-    let select = 'SELECT users.username, product.name, indexed.price, indexed.quantity ';
-    let from = 'FROM users, product, indexed '
-    let where = 'WHERE indexed.user = users.id AND product.id = indexed.item AND users.id = ' + product;
-    let ex1 = await db.all(select + where + from);
+    let product = "'" + req.params.product + "'"; //the id of the listing item
+    let select = 'SELECT users.username, product.name, listing.price, listing.quantity ';
+    let from = 'FROM users, product, listing '
+    let where = 'WHERE listing.user = users.id AND product.id = listing.item AND listing.id = ' + product;
+    let ex1 = await db.all(select + from + where);
     if (ex1.length < 1) {
       res.type('text');
-      res.status(400).send('Yikes. User does not exist.');
+      res.status(400).send('Yikes. product does not exist.');
       return;
     }
     await db.close();
     res.json(ex1);
   } catch (err) {
+    console.log(err);
     res.type('text');
-    res.status(400).send('Yikes. User does not exist.');
+    res.status(400).send('Yikes. product does not exist.');
+  }
+});
+
+//how we can grab the filter for individual people
+//SELECT users.username, product.name, listing.price, listing.quantity
+//FROM users, product, listing
+//WHERE listing.user = users.id AND product.id = listing.item AND users.id = 3
+
+app.get('/history/:user', async function(req, res) {
+  try {
+    let db = await getDBConnection();
+    let nameId = "'" + req.params.user + "'";
+    let sql = 'SELECT * FROM transactions WHERE nameid = ' + nameId;
+    let ex1 = await db.all(sql);
+    if (ex1.length < 1) {
+      res.type('text');
+      res.status(400).send('History does not exist yet!');
+      return;
+    }
+    await db.close();
+    res.json(ex1);
+  } catch (err) {
+    console.log(err);
+    res.type('text');
+    res.status(400).send('Yikes. product does not exist.');
   }
 });
 
@@ -70,7 +105,28 @@ app.get('/shopping/product/:product', async function(req, res) {
  * This endpoint provides us information about the transactions of a user. Currently returning
  * all of the data.
  */
-app.get('')
+app.post('/update/history', async function(req, res) {
+  try {
+    let db = await getDBConnection();
+    let id = req.body.id; //id of the user
+    let item = req.body.item
+    let itemname = req.body.itemName; //item name
+    let price = req.body.price;
+    let quantity = req.body.quantity;
+    if (id.length < 1 || itemname.length < 1 || price.length < 1 || quantity.length < 1) {
+      res.type('text');
+      res.status(400).send('Missing one or more of the required params.');
+      return;
+    }
+    let sql = 'INSERT INTO transactions (nameid, item, quantity, price, itemName) VALUES(?, ?, ?, ?, ?)'
+    let ex1 = await db.run(sql, [id, item, quantity, price, itemname]);
+    res.json(ex1);
+  } catch (err) {
+    console.log(err);
+    res.type('text');
+    res.status(400).send('Missing one or more of the required params.');
+  }
+});
 
 /*
  * This endpoint updates the backend with the new yip submitted by the client. Returns JSON
@@ -79,8 +135,8 @@ app.get('')
 app.post('/login', async function(req, res) {
   try {
     let db = await getDBConnection();
-    let name = req.body.name;
     let password = req.body.password;
+    let name = req.body.user;
     if (name.length < 1 || password.length < 1) {
       res.type('text');
       res.status(400).send('Missing one or more of the required params.');
@@ -106,10 +162,10 @@ app.post('/login', async function(req, res) {
 app.post('/signup', async function(req, res) {
   try {
     let db = await getDBConnection();
-    let name = req.body.name;
+    let name = req.body.user;
     let password = req.body.password;
     let email = req.body.email;
-    if (name.length < 1 || password.length < 1 || email < 1) {
+    if (name.length < 1 || password.length < 1 || email.length < 1) {
       res.type('text');
       res.status(400).send('Missing one or more of the required params.');
       return;
@@ -126,6 +182,7 @@ app.post('/signup', async function(req, res) {
     res.type('text');
     res.send("success");
   } catch (err) {
+    console.log(err);
     res.type('text');
     res.status(400).send('Missing one or more of the required params.');
   }
@@ -148,9 +205,9 @@ app.post('/shopping/sell', async function(req, res) {
       res.status(400).send('Missing one or more of the required params.');
       return;
     }
-    let sql = 'INSERT INTO indexed (user, item, price, quantity) VALUES(?, ?, ?, ?)';
+    let sql = 'INSERT INTO listing (user, item, price, quantity) VALUES(?, ?, ?, ?)';
     let ex1 = await db.run(sql, [user, item, price, quantity]);
-    let sql2 = 'UPDATE users SET monies = monies + "' + total + '" WHERE username = ' + user;
+    let sql2 = 'UPDATE users SET monies = monies + ' + total + ' WHERE id = ' + user;
     let ex2 = await db.run(sql2);
     res.json(ex2);
   } catch (err) {
@@ -159,28 +216,40 @@ app.post('/shopping/sell', async function(req, res) {
   }
 });
 
-//buy endpoint
+//buy endpoint, subtract quantity of the item bought, subtract person who bought monies,
 app.post('/shopping/buy', async function(req, res) {
   try {
     let db = await getDBConnection();
     let id = req.body.id; //int id for the product they are buying
-    let item = req.body.item;
-    let price = req.body.price;
-    let quantity = req.body.quantity;
-    if (user.length < 1 || item.length < 1 || price.length < 1 || quantity < 1) {
+    let user = req.body.user; //string for the user
+    //let item = req.body.item;
+    let price = req.body.price; //int price of the item
+    let quantity = req.body.quantity; //int quantity of the item
+    let total = price * quantity;
+    if (id.length < 1 || price.length < 1 || quantity < 1) {
       res.type('text');
       res.status(400).send('Missing one or more of the required params.');
       return;
     }
-    let sql = 'INSERT INTO indexed (user, item, price, quantity) VALUES(?, ?, ?, ?)';
-    let ex1 = await db.run(sql, [user, item, price, quantity]);
-    if (ex1.length < 1) {
+    let dbQuantity = await db.all('SELECT quantity FROM listing WHERE id = ' + id);
+    dbQuantity = dbQuantity[0];
+    if(quantity > dbQuantity.quantity) {
       res.type('text');
-      res.status(400).send('Incorrect username or password');
+      res.status(400).send('Too many items requested');
       return;
     }
-    res.json(ex1);
+    else if(quantity === dbQuantity.quantity) {
+      let sql = 'DELETE FROM listing WHERE id = ' + id;
+      let reso = db.run(sql);
+    } else {
+      let sql1 = 'UPDATE listing SET quantity = quantity - ? WHERE id = ?;'
+      let ex1 = await db.run(sql1, [quantity, id]);
+    }
+    let sql2 = 'UPDATE users SET monies = monies - ? WHERE username = ?';
+    let ex2 = db.run(sql2, [total, user]);
+    res.json(ex2);
   } catch (err) {
+    console.log(err);
     res.type('text');
     res.status(400).send('Missing one or more of the required params.');
   }
@@ -192,7 +261,7 @@ app.post('/shopping/buy', async function(req, res) {
  */
  async function getDBConnection() {
   const db = await sqlite.open({
-    filename: 'yipper.db',
+    filename: 'bingo.db',
     driver: sqlite3.Database
   });
   return db;
