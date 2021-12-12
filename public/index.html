@@ -15,6 +15,7 @@
       </div>
       <nav>
         <select name="searchType" id="searchType">
+          <option value="Name">Name</option>
           <option value="Seller">Seller</option>
           <option value="Price">Price</option>
           <option value="Quantity">Quantity</option>
@@ -27,13 +28,14 @@
     </header>
     <main>
       <article id="overall">
-        <!-- view where the user will login-->
         <h1>We've got Great Grains!</h1>
+
+        <!-- view where the user will login-->
         <section id="login" class="view-border">
           <label><input type="checkbox" name="newAccount" value="newAcc">Register New Account? </label>
-          <form novalidate>
+          <form>
             <label for='email' class = "hidden">Email</label>
-            <input type='text' id='email' name='email' class="hidden" required>
+            <input type='text' id='email' name='email' class="hidden">
             <label for='name'>Username</label>
             <input type='text' id='name' name='name' required>
             <label for='password'>Password</label>
@@ -50,94 +52,19 @@
             <br>
             <label><input type="radio" name="itemsView" value="list">List View</label>
             <h3>Filters:</h3>
-            <label><input type="checkbox" name="itemsFilter" value="wheat" checked>Wheat</label><br>
-            <label><input type="checkbox" name="itemsFilter" value="barley" checked>Barley</label><br>
-            <label><input type="checkbox" name="itemsFilter" value="corn" checked>Corn</label><br>
-            <label><input type="checkbox" name="itemsFilter" value="rice" checked>Rice</label><br>
-            <label><input type="checkbox" name="itemsFilter" value="maize" checked>Maize</label>
-            <br>
+            <label><input type="checkbox" name="itemsFilter" value="grains" checked>Grains</label><br>
+            <label><input type="checkbox" name="itemsFilter" value="fruits" checked>Fruits</label><br>
+            <label><input type="checkbox" name="itemsFilter" value="vegetables" checked>Vegetables</label><br>
             <button id="filter-btn">Update filters</button>
           </section>
 
           <!-- view where products will get loaded into  -->
           <section id="home" class="view-border gridLayout hidden">
-            <article class="product">
-              <div class="product-hover-div">
-                <div class="product-hover-text">Remove from cart</div>
-              </div>
-              <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
-              <div>
-                <div class="product-labels">
-                  <h2>barley</h2>
-                  <p class="product-seller-tag">Seller:</p>
-                  <p class="product-seller">Faraz hi</p>
-                </div>
-                <div class="product-values">
-                  <p class="product-money currSign">420.69</p>
-                  <p class="product-amount-tag">Avaliable:</p>
-                  <p class="product-amount">1000</p>
-                </div>
-              </div>
-            </article>
-            <div class="product">
-              <div class="product-hover-div">
-                <p class="product-hover-text">Remove from cart</p>
-              </div>
-              <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
-              <div>
-                <div class="product-labels">
-                  <h2>barley</h2>
-                  <p class="product-seller-tag">Seller:</p>
-                  <p class="product-seller">Faraz Chadeshi</p>
-                </div>
-                <div class="product-values">
-                  <p class="product-money currSign">420.69</p>
-                  <p class="product-amount-tag">Avaliable:</p>
-                  <p class="product-amount">1000</p>
-                </div>
-              </div>
-            </div>
-            <div class="product">
-              <div class="product-hover-div">
-                <div class="product-hover-text">Remove from cart</div>
-              </div>
-              <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
-              <div>
-                <div class="product-labels">
-                  <h2>barley</h2>
-                  <p class="product-seller-tag">Seller:</p>
-                  <p class="product-seller">Faraz Chadeshi</p>
-                </div>
-                <div class="product-values">
-                  <p class="product-money currSign">420.69</p>
-                  <p class="product-amount-tag">Avaliable:</p>
-                  <p class="product-amount">1000</p>
-                </div>
-              </div>
-            </div>
           </section>
 
           <!-- view of all items the user intends to purchase-->
           <section id="cart" class="view-border hidden">
             <div id="cart-bag">
-              <div class="product">
-                <div class="product-hover-div">
-                  <div class="product-hover-text">Remove from cart</div>
-                </div>
-                <img src="img/barley.jpg" alt="https://pxhere.com/en/photo/1263020">
-                <div>
-                  <div class="labels">
-                    <h3 class="product-name">barley</h3>
-                    <p class="seller-tag">Seller:</p>
-                    <p class="product-seller">Faraz Chadeshi</p>
-                  </div>
-                  <div class="values">
-                    <p class="product-money currSign">420.69</p>
-                    <p class="avaliable-tag">Avaliable:</p>
-                    <p class="product-amount">1000</p>
-                  </div>
-                </div>
-              </div>
             </div>
             <p>Your total purchase will cost:</p>
             <p id="cart-sum-price" class="currSign">0123</p>

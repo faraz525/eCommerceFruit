@@ -22,12 +22,10 @@
   */
   function init() {
     reqAllitems();
-<<<<<<< HEAD
 
-=======
-    let ide = window.localStorage.getItem('sessionid');
-    console.log(ide);
->>>>>>> 0f51418761c15dff6136bdb0c200577771372a9b
+    let loginToggle = qs('#login label input');
+    loginToggle.addEventListener("input", toggleLogin);
+
     let searchTerm = id("search-term");
     searchTerm.addEventListener("input", searchCheck);
 
@@ -46,6 +44,14 @@
 
       loginUser();
     });
+  }
+
+  function toggleLogin() {
+    let label = qs('#login form label');
+    label.classList.toggle('hidden');
+    let email = qs('#login form #email');
+    email.required = !email.required;
+    email.classList.toggle('hidden');
   }
 
   async function loginUser() {
@@ -75,6 +81,8 @@
 
     }
   }
+
+
   /**
   * Shows a requested view, while hiding all other views
   * @param {String} viewName the name of the view to show
@@ -174,7 +182,7 @@
     let dPrdctVal = genProductValue(curProduct);
 
     artcl.classList.add('product');
-    artcl.id = curProduct.id;
+    artcl.id = curProduct.id + "-" + curProduct.type;
     igIcn.src = "img/" + curProduct.name + ".jpg";
     igIcn.alt = curProduct.name;
 
