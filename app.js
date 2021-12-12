@@ -215,7 +215,6 @@ app.post('/signup', async function(req, res) {
     res.type('text');
     res.send("success");
   } catch (err) {
-    console.log(err);
     res.type('text');
     res.status(400).send('Missing one or more of the required params.');
   }
@@ -312,6 +311,7 @@ app.post('/logout', function(req, res) {
   }
 });
 
+//This api gets information for a user based on their session id
 app.get('/getuser/:user', async function(req, res) {
   res.type('text');
   let nameId = req.params.user;
