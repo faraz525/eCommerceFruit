@@ -313,21 +313,28 @@ button:hover {
   opacity: 1;
 }
 
-.product-hover-div {
+.product-hover-div-buy {
+  height: 47%;
+  background-color: #CFFFB3;
+}
+
+.product-hover-div-sell {
+  top: 50%;
+  height: 47%;
+  background-color: #b3e2ff;
+}
+
+.product-hover-div-buy, .product-hover-div-sell {
   position: absolute;
-  height: 95%;
   width: 90%;
   opacity: 0;
-  background-color: #CFFFB3;
 }
 
 .product-hover-text {
   color: black;
   font-size: 20px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
+  margin: auto;
   text-align: center;
 }
 
