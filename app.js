@@ -1,9 +1,8 @@
 /*
  *Faraz Qureshi & Nicholas Neshev
  *12/3/21
- *This is my server side JS code where I build up a NodeJS server responsible for interacting
- * with our sqlite database. This file is responsible for providing front end with various
- * endpoints.
+ *This is our server side code where we develop endpoints that the front end can use to access
+ *database elements and also interact with them to sell, buy items.
  */
 'use strict';
 const express = require('express');
@@ -21,11 +20,8 @@ app.use(express.json());
 
 app.use(multer().none());
 const COOKIE_EXPIRATION = 1000 * 60 * 60 * 3;
-//Primary endpoint that allows the front end to request data about all the items on the website.
-//handle the situation where we need to be able to search for different types of info.
 
-//SELECT users.username, product.name, listing.price, listing.quantity FROM listing, users, product WHERE listing.user = users.id AND listing.item = product.id
-//have search filters by
+//Primary endpoint that allows the front end to request data about all the items on the website.
 app.get('/shopping/shop', async function(req, res) {
   try{
     let db = await getDBConnection();
@@ -34,7 +30,6 @@ app.get('/shopping/shop', async function(req, res) {
     if (search) {
       let val = "'%" + search + "%'";
       let ex1;
-      //we can have an array of items that match up the item on client side js and just grab em
       if(type === 'item') {
         let sql = 'SELECT listing.id FROM listing, product WHERE listing.item = product.id AND product.name LIKE ' + val;
         ex1 = await db.all(sql);
@@ -65,13 +60,10 @@ app.get('/shopping/shop', async function(req, res) {
 });
 
 /*
- * This endpoint provides the front end with all data related to individual products. For example,
- * if the user wanted to know more about an individual, this endpoint will provide them all the info
+ * This endpoint provides the front end with all data related to individual listings. For example,
+ * if the user wanted to know more about a listing, this endpoint will provide them all the info
  */
-// param will be the id of the card
 
-// return a specific index id data for process.
-//gets more information about listing items
 app.get('/shopping/product/:product', async function(req, res) {
   try {
     let db = await getDBConnection();
@@ -97,11 +89,8 @@ app.get('/shopping/product/:product', async function(req, res) {
   }
 });
 
-//how we can grab the filter for individual people
-//SELECT users.username, product.name, listing.price, listing.quantity
-//FROM users, product, listing
-//WHERE listing.user = users.id AND product.id = listing.item AND users.id = 3
-//the sessionid of the user is being sent
+//This endpoint is used to get all the data about the history of a candidate and all transactions
+
 app.get('/history/:user', async function(req, res) {
   try {
     let db = await getDBConnection();
@@ -125,8 +114,7 @@ app.get('/history/:user', async function(req, res) {
 });
 
 /*
- * This endpoint provides us information about the transactions of a user. Currently returning
- * all of the data.
+ * This endpoint provides the ability to update the backend for the history of transactions
  */
 app.post('/update/history', async function(req, res) {
   res.type('text');
@@ -156,8 +144,7 @@ app.post('/update/history', async function(req, res) {
 });
 
 /*
- * This endpoint updates the backend with the new yip submitted by the client. Returns JSON
- * data back to the front end in the manner specified through the documentation.
+ * This endpoint has logic to determine if the users are actually users and can login to the site
  */
 app.post('/login', async function(req, res) {
   try {
@@ -186,8 +173,7 @@ app.post('/login', async function(req, res) {
 });
 
 /*
- * This endpoint updates the backend with the new yip submitted by the client. Returns JSON
- * data back to the front end in the manner specified through the documentation.
+ * This endpoint updates the backend with information about the new user and also logs them in
  */
 app.post('/signup', async function(req, res) {
   try {
@@ -220,10 +206,7 @@ app.post('/signup', async function(req, res) {
   }
 });
 
-//INSERT INTO indexed (user, item, price, quantity)
-//VALUES ("3", "2", "10", "250");
-//also have to increase the user money.
-
+//This api is used in order to provid a selling endpoint to users as they sell items.
 app.post('/shopping/sell', async function(req, res) {
   try {
     let db = await getDBConnection();
@@ -267,7 +250,6 @@ app.post('/shopping/buy', async function(req, res) {
     let userMonies = await db.all('SELECT monies FROM users WHERE username = ' + "'" +user + "'");
     dbQuantity = dbQuantity[0];
     userMonies = userMonies[0];
-    console.log(total + "------" + userMonies.monies)
     if(quantity > dbQuantity.quantity) {
       res.type('text');
       res.status(400).send('Too many items requested');
@@ -289,7 +271,6 @@ app.post('/shopping/buy', async function(req, res) {
     let ex2 = db.run(sql2, [total, user]);
     res.json(ex2);
   } catch (err) {
-    console.log(err);
     res.type('text');
     res.status(400).send('Missing one or more of the required params.');
   }

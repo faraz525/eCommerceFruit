@@ -21,7 +21,6 @@
   */
   function init() {
     goLogin();
-    //Cookie shortcut
     if (document.cookie.split('; ').find(row => row.startsWith('sessionid='))) {
       const cookieValue = document.cookie
         .split('; ')
@@ -161,6 +160,10 @@
   }
 
   /** ------------------------------ Login Functions  ------------------------------ */
+
+  /**
+  * Update user simply sets the money tab at the top to whatever cash that the user has
+  */
   async function updateUser() {
     let user = await reqSessionDetails();
     let moneyTab = id('account-balance');
@@ -171,6 +174,9 @@
     }
   }
 
+  /**
+  * Helper function that is used to toggle the login fields and make the email field visible
+  */
   function toggleLogin() {
     let label = qs('#login form label');
     label.classList.toggle('hidden');
@@ -188,7 +194,6 @@
     let params = new FormData();
     params.append('user', user);
     params.append('password', password);
-
     if(qs("#login form button").classList.contains("login")) {
       postLogin(params);
     } else if (qs("#login form button").classList.contains("signup")) {
@@ -198,6 +203,10 @@
     }
   }
 
+  /**
+  * Function that is used to send information up to the API for the login
+  * @param {JSON} params The params needed in order to send infromation to API
+  */
   async function postLogin(params) {
     let url = '/login';
     try {
@@ -236,6 +245,9 @@
     }
   }
 
+  /**
+  * Helper function the log the user out of their account by ending the cookie
+  */
   async function logOut() {
     goLogin();
     updateUser();
@@ -253,7 +265,6 @@
 
   function processLogin(res) {
     if (res.length > 0) {
-      console.log("Login Success");
       startWebsite();
     }
   }
@@ -524,12 +535,10 @@
   /** ------------------------------ GET for general info  ------------------------------ */
   async function reqSingleListing(listingID) {
     let url = "/shopping/product/" + listingID;
-    console.log(url);
     try {
       let res = await fetch(url);
       await statusCheck(res);
       res = await res.json();
-      console.log(res);
       return res[0];
     } catch (err) {
       handleErr(err);
@@ -689,14 +698,12 @@
     let singleItemName = qs("#single .product h2").textContent;
     let singlePrice = qs("#single .product .product-money").textContent;
     let singleQuantity = id("count").value;
-
     let params = new FormData();
     params.append('id', userId)
     params.append('item', singleItemId);
     params.append('itemName', singleItemName);
     params.append('price', singlePrice);
     params.append('quantity', singleQuantity);
-
     let url = "update/history"
     try {
       let res = await fetch(url, { method: 'POST', body: params });
@@ -714,21 +721,17 @@
     let singleId = qs("#single .product").id.split("-")[2];
     let singlePrice = qs("#single .product .product-money").textContent
     let singleQuantity = id("count").value;
-
     let params = new FormData();
     params.append('name', userId)
     params.append('item', singleId);
     params.append('price', singlePrice);
     params.append('quantity', singleQuantity);
-
-    let url = "/shopping/sell/"
-    console.log(url);
+    let url = "/shopping/sell/";
     try {
       let res = await fetch(url, { method: 'POST', body: params });
       await statusCheck(res);
       res = await res.text();
       updateUser();
-      console.log(res);
       let listingJson = await reqSingleListing(res);
       id("home").appendChild(genCurProductArticle(listingJson, true));
     } catch (err) {
@@ -756,6 +759,9 @@
     }
   }
 
+  /**
+  * hides the search results
+  */
   function hideSearchResult(res){
     let arr = [];
       for(let i = 0; i < Object.keys(res).length; i++) {
@@ -766,7 +772,7 @@
   }
 
   /**
-  * Makes all yips visible
+  * Makes all items visible
   */
   function showProducts() {
     let articles = qsa("#home article");
