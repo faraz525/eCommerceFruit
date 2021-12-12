@@ -38,9 +38,9 @@
     let historyBtn = id("history-btn");
     historyBtn.addEventListener("click", goHistory);
 
-    let viewRadioGrid = qsa('input[name=itemsView]')[0];
+    let viewRadioGrid = qsa('#visuals input[name=itemsView]')[0];
     viewRadioGrid.addEventListener("input", toggleHomeView);
-    let viewRadioList = qsa('input[name=itemsView]')[1];
+    let viewRadioList = qsa('#visuals input[name=itemsView]')[1];
     viewRadioList.addEventListener("input", toggleHomeView);
 
     let filterBtn = id("filter-btn");
@@ -126,8 +126,6 @@
     }
   }
 
-
-
   /**
   * Shows the home view, ensuring that all yips are visible and that the search bar is cleared.
   */
@@ -136,7 +134,6 @@
     showProducts();
     showView('home');
     id("visuals").classList.remove("hidden");
-    id("single").classList.remove("hidden");
   }
 
   function toggleHomeView() {
@@ -152,6 +149,21 @@
     clearSearch();
     showView("history");
     console.log("If God exists, then why do I not feel his mercy?")
+  }
+
+  function showSingle() {
+    clearSearch();
+    id("single").classList.remove("hidden");
+  }
+
+  function goBuy() {
+    showSingle();
+    updateSingle(this.parentElement, "buy");
+  }
+
+  function goSell() {
+    showSingle();
+    updateSingle(this.parentElement, "sell");
   }
 
   /**
@@ -178,7 +190,7 @@
     let container = id("home");
     let len = Object.keys(responseData).length;
     for (let i = 0; i < len; i++) {
-      let curArticle = genCurProductArticle(responseData[i]);
+      let curArticle = genCurProductArticle(responseData[i], true);
       console.log(curArticle);
       container.appendChild(curArticle);
     }
@@ -189,13 +201,11 @@
   * @param {JSON} curYip Current yip to use
   * @returns {article} an article containing all of the appropriate information of the yip
   */
-  function genCurProductArticle(curProduct) {
+  function genCurProductArticle(curProduct, includeHovers) {
     console.log(curProduct);
     let artcl = gen("article");
     let igIcn = gen("img");
     let dInfo = gen("div");
-    let dPrdctHvrBuy = genProductHoverBuy();
-    let dPrdctHvrSell = genProductHoverSell();
     let dPrdctLbl = genProductLabel(curProduct);
     let dPrdctVal = genProductValue(curProduct);
 
@@ -204,8 +214,14 @@
     igIcn.src = "img/" + curProduct.name + ".jpg";
     igIcn.alt = curProduct.name;
 
-    artcl.appendChild(dPrdctHvrBuy);
-    artcl.appendChild(dPrdctHvrSell);
+    if (includeHovers) {
+      let dPrdctHvrBuy = genProductHoverBuy();
+      dPrdctHvrBuy.addEventListener("click", goBuy);
+      let dPrdctHvrSell = genProductHoverSell();
+      dPrdctHvrSell.addEventListener("click", goSell);
+      artcl.appendChild(dPrdctHvrBuy);
+      artcl.appendChild(dPrdctHvrSell);
+    }
     artcl.appendChild(igIcn);
     dInfo.appendChild(dPrdctLbl);
     dInfo.appendChild(dPrdctVal);
@@ -306,6 +322,16 @@
     return dValue;
   }
 
+  function updateSingle(product, type) {
+    console.log(product);
+    let title = id("single-title");
+    if (type === "buy") {
+      title.textContent = "BUY BUY BUY";
+    } else if (type === "sell") {
+      title.textContent = "SELL SELL SELL";
+    }
+  }
+
   /**
   * Checks the contents of the search bar, and makes the search button appropiately enabled or
   * disabled if the search bar contents are valid
@@ -339,7 +365,16 @@
   }
 
   function updateFilters() {
-    let i = 0;
+    let filters = [];
+    let filterBoxes = qsa("#visuals input[name=itemsFilter]");
+    for(let i = 0; i < filterBoxes.length; i++) {
+      if(filterBoxes[i].checked === false) {
+        filters.push(filterBoxes[i].value);
+      }
+    }
+    console.log(filters);
+    showProducts();
+    hideProducts(filters, "type");
   }
 
   /**
@@ -356,15 +391,20 @@
   * Hides any yips which are not found in responseData
   * @param {JSON} responseData a list of yips ids
   */
-  function hideProducts(responseData) {
-    let articles = qsa("#home article");
-    let resIndex = 0;
-    for (let i = articles.length - 1; i >= 0; i--) {
-      let hide = true;
-      if (resIndex < Object.keys(responseData).length) {
-        if ("" + responseData[resIndex].id === "" + articles[i].id) {
-          hide = false;
-          resIndex++;
+  function hideProducts(match, filter) {
+    let articles = qsa("#home > article");
+    for (let i = 0; i < articles.length; i++) {
+      let hide = false;
+      if (filter === 'type') {
+        if(match.includes(articles[i].id.split("-")[1])) {
+          console.log();
+          hide = true;
+        }
+      }
+      if (filter === "id") {
+        if(match.includes(articles[i].id.split("-")[0])) {
+          console.log();
+          hide = true;
         }
       }
       if (hide) {
