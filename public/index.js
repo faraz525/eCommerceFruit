@@ -10,22 +10,22 @@
  */
 "use strict";
 
-(function () {
+(function() {
   let sessionId;
 
   window.addEventListener("load", init);
 
   /**
-  * Fills the webpage with cards, and adds event listeners for going to the home view, the history
-  * view, the login view, handling searches, and handling buying/selling.
-  */
+   * Fills the webpage with cards, and adds event listeners for going to the home view, the history
+   * view, the login view, handling searches, and handling buying/selling.
+   */
   function init() {
     // Begin our webpage off by going to the login screen
     goLogin();
+
     // If there is already a session cookie, there is no need to login
     if (document.cookie.split('; ').find(row => row.startsWith('sessionid='))) {
       saveCookie();
-      console.log(sessionId);
       if (sessionId) {
         startWebsite();
       }
@@ -41,51 +41,41 @@
     });
 
     /** ------------------------------ Navbar Event Listeners ------------------------------ */
-    let searchSelector = id("search-type");
-    searchSelector.addEventListener("input", updateSearchProperties);
+    id("search-type").addEventListener("input", updateSearchProperties);
 
-    let searchTerm = id("search-term");
-    searchTerm.addEventListener("input", searchCheck);
+    id("search-term").addEventListener("input", searchCheck);
 
-    let searchBtn = id("search-btn");
-    searchBtn.addEventListener("click", reqSearch);
+    id("search-btn").addEventListener("click", reqSearch);
 
-    let homeBtn = id("home-btn");
-    homeBtn.addEventListener("click", goHome);
+    id("home-btn").addEventListener("click", goHome);
 
-    let historyBtn = id("history-btn");
-    historyBtn.addEventListener("click", goHistory);
+    id("history-btn").addEventListener("click", goHistory);
 
-    let signOutBtn = id('sign-out-btn');
-    signOutBtn.addEventListener("click", logOut);
+    id('sign-out-btn').addEventListener("click", logOut);
 
     /** ------------------------------ Filter Event Listeners ------------------------------ */
     let viewRadio = qsa('#visuals input[name=itemsView]');
-    for(let i = 0; i < viewRadio.length; i++) {
+    for (let i = 0; i < viewRadio.length; i++) {
       viewRadio[i].addEventListener("input", toggleHomeView);
     }
 
-    let filterBtn = id("filter-btn");
-    filterBtn.addEventListener("click", updateFilters);
+    id("filter-btn").addEventListener("click", updateFilters);
 
     /** ------------------------------ Single Event Listeners ------------------------------ */
-    let countInput = id("count");
-    countInput.addEventListener("input", clearConfirmation);
+    id("count").addEventListener("input", clearConfirmation);
 
-    let confirmTransactionBtn = id('single-confirm-btn');
-    confirmTransactionBtn.addEventListener("click", confirmTransaction);
+    id('single-confirm-btn').addEventListener("click", confirmTransaction);
 
-    let submitTransactionBtn = id('single-submit-btn');
-    submitTransactionBtn.addEventListener("click", submitTransaction);
+    id('single-submit-btn').addEventListener("click", submitTransaction);
   }
 
   /** ------------------------------ View Functions  ------------------------------ */
 
   /**
-  * Shows a requested view, while hiding all other views
-  * @param {String} viewName the name of the view to show
-  */
-   function showView(viewName) {
+   * Shows a requested view, while hiding all other views
+   * @param {String} viewName the name of the view to show
+   */
+  function showView(viewName) {
     if (viewName === "home") {
       id("search-term").disabled = false;
       id("search-type").disabled = false;
@@ -104,8 +94,8 @@
   }
 
   /**
-  * Shows the home view, ensuring that all products are visible and that the search bar is cleared.
-  */
+   * Shows the home view, ensuring that all products are visible and that the search bar is cleared.
+   */
   function goHome() {
     clearSearch();
     showListings();
@@ -115,9 +105,9 @@
   }
 
   /**
-  * Shows the history view, ensuring that the search bar is cleared
-  */
-   async function goHistory() {
+   * Shows the history view, ensuring that the search bar is cleared
+   */
+  function goHistory() {
     clearSearch();
     reqUserHistory();
     qs("h1").textContent = "View your past purchases";
@@ -187,8 +177,8 @@
   }
 
   /**
-  * Switches between a menu for signing up and logging in
-  */
+   * Switches between a menu for signing up and logging in
+   */
   function toggleLogin() {
     let label = qs('#login form label');
     label.classList.toggle('hidden');
@@ -196,15 +186,15 @@
     email.required = !email.required;
     email.classList.toggle('hidden');
     let submitBtn = qs("#login form button");
-    submitBtn.classList.toggle('login')
-    submitBtn.classList.toggle('signup')
+    submitBtn.classList.toggle('login');
+    submitBtn.classList.toggle('signup');
   }
 
   /**
    * Sends the form information to the respective function if we want to login a new user or an
    * existing user
    */
-  async function loginUser() {
+  function loginUser() {
     let user = id('name').value;
     let password = id('password').value;
     let params = new FormData();
@@ -213,21 +203,21 @@
     if (qs("#login form button").classList.contains("login")) {
       postLogin(params);
     } else if (qs("#login form button").classList.contains("signup")) {
-      let email = id("email").value
+      let email = id("email").value;
       params.append('email', email);
       postSignup(params);
     }
   }
 
   /**
-  * fetch POSTS to the API to verify that provided login credentials exist in our db, and saves a
-  * cookie for this user
-  * @param {FormData} params the form that the login endpoint needs
-  */
+   * fetch POSTS to the API to verify that provided login credentials exist in our db, and saves a
+   * cookie for this user
+   * @param {FormData} params the form that the login endpoint needs
+   */
   async function postLogin(params) {
     let url = '/login';
     try {
-      let res = await fetch(url, { method: 'POST', body: params });
+      let res = await fetch(url, {method: 'POST', body: params});
       await statusCheck(res);
       res = await res.json();
       saveCookie();
@@ -245,11 +235,9 @@
   async function postSignup(params) {
     let url = '/signup';
     try {
-      let res = await fetch(url, { method: 'POST', body: params });
+      let res = await fetch(url, {method: 'POST', body: params});
       await statusCheck(res);
-      console.log(res);
       res = await res.text();
-      console.log(res);
       saveCookie();
       qs('#login label input').checked = false;
       toggleLogin();
@@ -260,8 +248,8 @@
   }
 
   /**
-  * Helper function that logs the user out of their account by ending the cookie
-  */
+   * Helper function that logs the user out of their account by ending the cookie
+   */
   async function logOut() {
     goLogin();
     updateUser();
@@ -269,7 +257,7 @@
     container.innerHTML = "";
     let url = '/logout';
     try {
-      let res = await fetch(url, { method: 'POST' });
+      let res = await fetch(url, {method: 'POST'});
       await statusCheck(res);
       res = await res.text();
     } catch (err) {
@@ -282,7 +270,6 @@
    * @param {text} res id of the user
    */
   function processLogin(res) {
-    console.log(res);
     if (res.length > 0) {
       startWebsite();
     }
@@ -301,12 +288,12 @@
   /** ------------------------------ NavBar Functions  ------------------------------ */
 
   /**
-  * Update user sets the money tab at the top to whatever cash that the user has
-  */
-   async function updateUser() {
+   * Update user sets the money tab at the top to whatever cash that the user has
+   */
+  async function updateUser() {
     let user = await reqSessionDetails();
     let moneyTab = id('account-balance');
-    if(user) {
+    if (user) {
       moneyTab.textContent = user.monies;
     } else {
       moneyTab.textContent = 0;
@@ -348,10 +335,10 @@
   }
 
   /**
-  * Checks the contents of the search bar, and makes the search button appropiately enabled or
-  * disabled if the search bar contents are valid
-  */
-   function searchCheck() {
+   * Checks the contents of the search bar, and makes the search button appropiately enabled or
+   * disabled if the search bar contents are valid
+   */
+  function searchCheck() {
     let but = id('search-btn');
     if (this.value.trim().length > 0) {
       but.disabled = false;
@@ -361,13 +348,12 @@
   }
 
   /**
-  * Clears the text from the search input
-  */
+   * Clears the text from the search input
+   */
   function clearSearch() {
     id("search-term").value = "";
     id('search-btn').disabled = true;
   }
-
 
   /** ------------------------------ History Functions  ------------------------------ */
   /**
@@ -382,8 +368,7 @@
       res = await res.json();
       processAllHistory(res);
     } catch (err) {
-      console.log(err.toString());
-      if(err.toString() === "Error: History does not exist yet!") {
+      if (err.toString() === "Error: History does not exist yet!") {
         qs("h1").textContent = "No past purchases yet :(";
       } else {
         handleErr(err);
@@ -395,16 +380,16 @@
    * Adds all given transactions into the history container
    * @param {JSON} res the transactions to add
    */
-  async function processAllHistory(res) {
+  function processAllHistory(res) {
     let info = res;
     let container = id('history');
     container.innerHTML = "";
     let len = Object.keys(res).length;
     for (let i = 0; i < len; i++) {
-      let section1 = gen('section')
+      let section1 = gen('section');
       section1.classList.add('transaction-container');
       let div1 = gen('div');
-      let p1 = gen('p')
+      let p1 = gen('p');
       p1.textContent = " Transaction ID: " + info[i].id + " ";
       div1.appendChild(p1);
       let d1 = divp("Total amount: $" + info[i].price * info[i].quantity);
@@ -469,8 +454,8 @@
 
   /** ------------------------------ Home Functions  ------------------------------ */
   /**
-  * Fetches infromation from the API about all of the listings in the database
-  */
+   * Fetches infromation from the API about all of the listings in the database
+   */
   async function reqAllitems() {
     let url = "/shopping/shop";
     try {
@@ -484,9 +469,9 @@
   }
 
   /**
-  * Adds all the listings in the database, as articles, into the home view container
-  * @param {JSON} responseData json representation of all listings in the database
-  */
+   * Adds all the listings in the database, as articles, into the home view container
+   * @param {JSON} responseData json representation of all listings in the database
+   */
   function processAllItems(responseData) {
     let container = id("home");
     let len = Object.keys(responseData).length;
@@ -497,11 +482,11 @@
   }
 
   /**
-  * Creates and returns an article which represents the curListing
-  * @param {JSON} curListing Current listing to use
-  * @param {boolean} includeHovers Whether or not this product should have on-hover divs
-  * @returns {article} an article containing all of the appropriate information of the listing
-  */
+   * Creates and returns an article which represents the curListing
+   * @param {JSON} curListing Current listing to use
+   * @param {boolean} includeHovers Whether or not this product should have on-hover divs
+   * @returns {article} an article containing all of the appropriate information of the listing
+   */
   function genCurListingArticle(curListing, includeHovers) {
     let artcl = gen("article");
     let igIcn = gen("img");
@@ -551,10 +536,10 @@
   }
 
   /**
-  * Creates and returns a div which represents the labels of curListing
-  * @param {JSON} curListing Current listing to use
-  * @returns {div} a div containing the name and seller of curListing
-  */
+   * Creates and returns a div which represents the labels of curListing
+   * @param {JSON} curListing Current listing to use
+   * @returns {div} a div containing the name and seller of curListing
+   */
   function genListingLabel(curListing) {
     let dLabel = gen("div");
     let h2 = gen("h2");
@@ -584,10 +569,10 @@
   }
 
   /**
-  * Creates and returns a div which represents the values of curListing
-  * @param {JSON} curListing Current listing to use
-  * @returns {div} a div containing the price and quantity information of curListing
-  */
+   * Creates and returns a div which represents the values of curListing
+   * @param {JSON} curListing Current listing to use
+   * @returns {div} a div containing the price and quantity information of curListing
+   */
   function genListingValue(curListing) {
     let dValue = gen("div");
     let pMoney = gen("p");
@@ -598,7 +583,7 @@
     pMoney.textContent = curListing.price;
     pMoney.classList.add('product-money');
     pMoney.classList.add('currSign');
-    pAmountTag.textContent = "Avaliable:"
+    pAmountTag.textContent = "Avaliable:";
     pAmountTag.classList.add('product-amount-tag');
     pAmount.textContent = curListing.quantity;
     pAmount.classList.add('product-amount');
@@ -655,10 +640,9 @@
     countInput.value = 1;
 
     let res = await reqSingleListing(product.id.split("-")[0]);
-    console.log(res);
 
     if (type === "buy") {
-      title.textContent = "How many of this listing would you like to buy?"
+      title.textContent = "How many of this listing would you like to buy?";
       countInput.max = res.quantity;
     } else if (type === "sell") {
       title.textContent = "You found 5 of this product lying around, sell some!";
@@ -682,7 +666,7 @@
     if (product) {
       id("single").removeChild(product);
     }
-    let divAfter = qsa("#single > p")[1]
+    let divAfter = qsa("#single > p")[1];
     if (type === "sell") {
       let sessionInfo = await reqSessionDetails();
       res.quantity = 5;
@@ -710,10 +694,10 @@
     smry.textContent = countVal + " " + name.textContent.toLowerCase();
     let sumPrice = id("single-sum-price");
     sumPrice.textContent = parseInt(price.textContent) * parseInt(countVal);
-    if(!(countVal === "0")){
+    if (!(countVal === "0")) {
       id("single-submit-btn").disabled = false;
     } else {
-      id("single-response").textContent = "There is no more of this product left"
+      id("single-response").textContent = "There is no more of this product left";
     }
   }
 
@@ -739,7 +723,6 @@
     id("single-sum-price").textContent = "";
   }
 
-
   /** ------------------------------ Buy/Sell Functions  ------------------------------ */
   /**
    * fetch POSTs a buy request which uses the count locked into the single listing view, then
@@ -750,27 +733,25 @@
     let singleId = qs("#single .product").id.split("-")[0];
     let singleUser = await reqSessionDetails();
     singleUser = singleUser.username;
-    let singlePrice = qs("#single .product .product-money").textContent
+    let singlePrice = qs("#single .product .product-money").textContent;
     let singleQuantity = id("count").value;
 
     let params = new FormData();
-    params.append('id', singleId)
+    params.append('id', singleId);
     params.append('user', singleUser);
     params.append('price', singlePrice);
     params.append('quantity', singleQuantity);
 
-    let url = "/shopping/buy/"
+    let url = "/shopping/buy/";
     try {
-      let res = await fetch(url, { method: 'POST', body: params });
-      console.log(res);
+      let res = await fetch(url, {method: 'POST', body: params});
       await statusCheck(res);
       updateUser();
       updateQuantities();
       postHistory();
     } catch (err) {
-      console.log(err.toString());
-      if(err.toString() === "Error: insufficient funds") {
-        id("single-response").textContent = "Not enough money to make this purchase"
+      if (err.toString() === "Error: insufficient funds") {
+        id("single-response").textContent = "Not enough money to make this purchase";
       } else {
         handleErr(err);
       }
@@ -788,9 +769,8 @@
     let singleQuantity = id("count").value;
     let newQuantity = curQuantity - singleQuantity;
 
-    console.log(newQuantity);
     id('count').max = newQuantity;
-    if( newQuantity === 0) {
+    if (newQuantity === 0) {
       id('count').min = 0;
     }
     qs("#single .product .product-amount").textContent = newQuantity;
@@ -801,7 +781,7 @@
         neededListing = allListings[i];
       }
     }
-    if(newQuantity === 0) {
+    if (newQuantity === 0) {
       id("home").removeChild(neededListing);
     } else {
       neededListing.querySelector(".product-amount").textContent = newQuantity;
@@ -821,14 +801,14 @@
     let singleQuantity = id("count").value;
 
     let params = new FormData();
-    params.append('id', userId)
+    params.append('id', userId);
     params.append('item', singleItemId);
     params.append('itemName', singleItemName);
     params.append('price', singlePrice);
     params.append('quantity', singleQuantity);
-    let url = "update/history"
+    let url = "update/history";
     try {
-      let res = await fetch(url, { method: 'POST', body: params });
+      let res = await fetch(url, {method: 'POST', body: params});
       await statusCheck(res);
       res = await res.text();
       id("single-response").textContent = "Transaction ID: " + res;
@@ -845,16 +825,16 @@
     let userId = await reqSessionDetails();
     userId = "" + userId.id;
     let singleId = qs("#single .product").id.split("-")[2];
-    let singlePrice = qs("#single .product .product-money").textContent
+    let singlePrice = qs("#single .product .product-money").textContent;
     let singleQuantity = id("count").value;
     let params = new FormData();
-    params.append('name', userId)
+    params.append('name', userId);
     params.append('item', singleId);
     params.append('price', singlePrice);
     params.append('quantity', singleQuantity);
     let url = "/shopping/sell/";
     try {
-      let res = await fetch(url, { method: 'POST', body: params });
+      let res = await fetch(url, {method: 'POST', body: params});
       await statusCheck(res);
       res = await res.text();
       updateUser();
@@ -866,14 +846,15 @@
   }
 
   /**
-  * Fetches information from the API to get the ids of any listings that contain the value in the
-  * search term of the type in the given selector, then hides all listings that aren't these ids
-  */
+   * Fetches information from the API to get the ids of any listings that contain the value in the
+   * search term of the type in the given selector, then hides all listings that aren't these ids
+   */
   async function reqSearch() {
     fillFilters();
     hideSingle();
 
-    let url = "/shopping/shop?search=" + id("search-term").value.trim() + "&type=" + id("search-type").value;
+    let url = "/shopping/shop?search=" + id("search-term").value.trim() + "&type=" +
+    id("search-type").value;
     try {
       let res = await fetch(url);
       await statusCheck(res);
@@ -889,11 +870,11 @@
    * Hides all listings that don't come up from a search result
    * @param {JSON} res the listings that did come up from a search result
    */
-  function hideSearchResult(res){
+  function hideSearchResult(res) {
     let arr = [];
-      for(let i = 0; i < Object.keys(res).length; i++) {
-        arr.push("" + res[i].id);
-      }
+    for (let i = 0; i < Object.keys(res).length; i++) {
+      arr.push("" + res[i].id);
+    }
     showListings();
     hideListings(arr, "id");
   }
@@ -909,12 +890,11 @@
   }
 
   /**
-  * Hides any listings as outline by match
-  * @param {Array} match a list of yips ids
-  * @param {string} filter a type or id search
-  */
+   * Hides any listings as outline by match
+   * @param {Array} match a list of yips ids
+   * @param {string} filter a type or id search
+   */
   function hideListings(match, filter) {
-    console.log(match);
     let articles = qsa("#home > article");
     for (let i = 0; i < articles.length; i++) {
       let hide = false;
@@ -937,58 +917,58 @@
   }
 
   /**
- * Helper function that serves to handle any error that occurs the platform.
- */
+   * Generically handles any errors that we don't account for by changing to an error view that
+   * needs a refresh to fix
+   * @param {Error} err the error
+   */
   function handleErr(err) {
-    console.error(err);
-    let single = id('home');
-    let error = id('error');
     showView("error");
+    id("error").textContent = id("error").textContent + " (" + err.toString() + ")";
     disableNavButtons();
   }
 
   /** ------------------------------ Helper Functions  ------------------------------ */
   /**
-  * Returns the element that has the ID attribute with the specified value.
-  * @param {string} idName - element ID
-  * @returns {object} DOM object associated with id.
-  */
+   * Returns the element that has the ID attribute with the specified value.
+   * @param {string} idName - element ID
+   * @returns {object} DOM object associated with id.
+   */
   function id(idName) {
     return document.getElementById(idName);
   }
 
   /**
-  * Returns the first element that matches the given CSS selector.
-  * @param {string} selector - CSS query selector.
-  * @returns {object} The first DOM object matching the query.
-  */
+   * Returns the first element that matches the given CSS selector.
+   * @param {string} selector - CSS query selector.
+   * @returns {object} The first DOM object matching the query.
+   */
   function qs(selector) {
     return document.querySelector(selector);
   }
 
   /**
-  * Returns the array of elements that match the given CSS selector.
-  * @param {string} selector - CSS query selector
-  * @returns {object[]} array of DOM objects matching the query.
-  */
+   * Returns the array of elements that match the given CSS selector.
+   * @param {string} selector - CSS query selector
+   * @returns {object[]} array of DOM objects matching the query.
+   */
   function qsa(selector) {
     return document.querySelectorAll(selector);
   }
 
   /**
-  * Returns a new element with the given tag name.
-  * @param {string} tagName - HTML tag name for new DOM element.
-  * @returns {object} New DOM object for given HTML tag.
-  */
+   * Returns a new element with the given tag name.
+   * @param {string} tagName - HTML tag name for new DOM element.
+   * @returns {object} New DOM object for given HTML tag.
+   */
   function gen(tagName) {
     return document.createElement(tagName);
   }
 
   /**
-  * Checks the message of the API call, if it's not ok, throw an error
-  * @param {object} res The API information
-  * @returns {object} The same API information
-  */
+   * Checks the message of the API call, if it's not ok, throw an error
+   * @param {object} res The API information
+   * @returns {object} The same API information
+   */
   async function statusCheck(res) {
     if (!res.ok) {
       throw new Error(await res.text());
