@@ -183,27 +183,44 @@
     }
   }
 
-  function processAllHistory(res) {
+  async function processAllHistory(res) {
     let info = res;
     console.log(info);
     let container = id('history');
-    let section1 = gen('section')
-    section1.classList.add('transaction-container');
-    let div1 = gen('div');
-    let p1 = gen('p')
-    p1.textContent = "Transaction ID: " + info.id;
-    div1.appendChild(p1);
-    let div2 = gen('div');
-    let p2 = gen('p')
-    p2.textContent = "Total amount: $" + info.price * info.quantity;
-    div2.appendChild(p2);
-    section1.appendChild(div1);
-    section1.appendChild(div2);
-    let hr = gen('hr');
-    section1.appendChild(hr);
-    let art = genCurProductArticle(info[0], false);
-    section1.appendChild(art);
-    container.appendChild(section1);
+    let len = Object.keys(res).length;
+    for(let i = 0; i < len; i++) {
+      let section1 = gen('section')
+      section1.classList.add('transaction-container');
+      let div1 = gen('div');
+      let p1 = gen('p')
+      p1.textContent = "Transaction ID: " + info[i].id;
+      div1.appendChild(p1);
+      let div2 = gen('div');
+      let p2 = gen('p')
+      p2.textContent = "Total amount: $" + info[i].price * info[i].quantity;
+      div2.appendChild(p2);
+      section1.appendChild(div1);
+      section1.appendChild(div2);
+      let hr = gen('hr');
+      section1.appendChild(hr);
+      let prodInfo;
+      try {
+        let res = await fetch("/shopping/product/" + info[i].id)
+        await statusCheck(res);
+        res = await res.json();
+        prodInfo = res;
+      } catch (err) {
+        res.status(400).send("No transaction history ");
+      }
+      console.log(prodInfo);
+      let art = genCurProductArticle(prodInfo[0], false);
+      section1.appendChild(art);
+      container.appendChild(section1);
+    }
+
+    // let art = genCurProductArticle(info[0], false);
+    // section1.appendChild(art);
+    // container.appendChild(section1);
 
   }
 
@@ -351,6 +368,7 @@
   * @returns {div} a div containing the name and yip of curYip
   */
   function genProductLabel(curProduct) {
+    //console.log(curProduct[0].name);
     let dLabel = gen("div");
     let h2 = gen("h2");
     let pSellerTag = gen("p");
@@ -375,6 +393,7 @@
   * @returns {String} the name formated as an img name
   */
   function capFirstLetter(name) {
+    //console.log(name);
     return name.charAt(0).toUpperCase() + name.slice(1);
   }
 
@@ -688,7 +707,7 @@
       navBtns[i].disabled = true;
     }
     */
-    console.error(err);
+    //console.error(err);
   }
 
   /** ------------------------------ Helper Functions  ------------------------------ */

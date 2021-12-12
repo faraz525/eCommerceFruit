@@ -240,7 +240,7 @@ app.post('/shopping/sell', async function(req, res) {
     let ex1 = await db.run(sql, [user, item, price, quantity]);
     let sql2 = 'UPDATE users SET monies = monies + ' + total + ' WHERE id = ' + user;
     let ex2 = await db.run(sql2);
-    res.json(ex2);
+    res.json(ex2.lastID);
   } catch (err) {
     res.type('text');
     res.status(400).send('Missing one or more of the required params.');
@@ -307,7 +307,7 @@ app.get('/getuser/:user', async function(req, res) {
   let nameId = req.params.user ;
   try {
     let db = await getDBConnection();
-    let sql = 'SELECT username FROM users WHERE sessionId = ' + "'" + nameId + "'";
+    let sql = 'SELECT username, id FROM users WHERE sessionId = ' + "'" + nameId + "'";
     let id = await db.all(sql);
     res.send(id);
   } catch (err) {
