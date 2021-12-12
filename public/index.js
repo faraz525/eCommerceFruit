@@ -22,6 +22,7 @@
   */
   function init() {
     reqAllitems();
+    console.log(document.cookie);
     if (document.cookie) {
       const cookieValue = document.cookie
         .split('; ')
