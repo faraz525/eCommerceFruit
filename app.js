@@ -70,7 +70,7 @@ app.get('/shopping/shop', async function(req, res) {
 // param will be the id of the card
 
 // return a specific index id data for process.
-
+//gets more information about listing items
 app.get('/shopping/product/:product', async function(req, res) {
   try {
     let db = await getDBConnection();
@@ -107,7 +107,6 @@ app.get('/history/:user', async function(req, res) {
     let nameId = req.params.user ;
     let sql = 'SELECT id FROM users WHERE sessionId = ' + "'" + nameId + "'";
     let id = await db.all(sql);
-    console.log(id);
     let sql1 = 'SELECT * FROM transactions WHERE nameid = ' + id[0].id;
     let ex1 = await db.all(sql1);
     if (ex1.length < 1) {
@@ -309,7 +308,7 @@ app.get('/getuser/:user', async function(req, res) {
   let nameId = req.params.user;
   try {
     let db = await getDBConnection();
-    let sql = 'SELECT username, id FROM users WHERE sessionId = ' + "'" + nameId + "'";
+    let sql = 'SELECT username, id, monies FROM users WHERE sessionId = ' + "'" + nameId + "'";
     let id = await db.all(sql);
     res.send(id);
   } catch (err) {

@@ -35,6 +35,9 @@
         enableNavButtons();
       }
     }
+
+    updateUser();
+
     let loginToggle = qs('#login label input');
     loginToggle.addEventListener("input", toggleLogin);
 
@@ -78,6 +81,17 @@
     });
   }
 
+  async function updateUser() {
+    let user = await reqSessionDetails();
+    console.log(user);
+    let moneyTab = id('account-balance');
+    if(user[0]) {
+      moneyTab.textContent = user[0].monies;
+    } else {
+      moneyTab.textContent = 0;
+    }
+  }
+
   function toggleLogin() {
     let label = qs('#login form label');
     label.classList.toggle('hidden');
@@ -116,7 +130,9 @@
 
   async function logOut() {
     goLogin();
-
+    updateUser();
+    let container = id('history');
+    container.innerHTML = "";
     let url = '/logout';
     try {
       let res = await fetch(url, { method: 'POST' });
@@ -134,6 +150,7 @@
       console.log("Success");
       goHome();
       enableNavButtons();
+      updateUser();
     }
   }
 
@@ -160,6 +177,8 @@
     clearSearch();
     showProducts();
     showView('home');
+    let container = id('history');
+    container.innerHTML = "";
     id("visuals").classList.remove("hidden");
   }
 
@@ -187,7 +206,6 @@
 
   async function processAllHistory(res) {
     let info = res;
-    console.log(info);
     let container = id('history');
     let len = Object.keys(res).length;
     for (let i = 0; i < len; i++) {
@@ -195,36 +213,26 @@
       section1.classList.add('transaction-container');
       let div1 = gen('div');
       let p1 = gen('p')
-      p1.textContent = "Transaction ID: " + info[i].id;
+      p1.textContent = " Transaction ID: " + info[i].id + " ";
       div1.appendChild(p1);
-      let div2 = gen('div');
-      let p2 = gen('p')
-      p2.textContent = "Total amount: $" + info[i].price * info[i].quantity;
-      div2.appendChild(p2);
+      let d1 = divp("Total amount: $" + info[i].price * info[i].quantity);
+      let d2 = divp("Item bought: " + info[i].itemName);
+      let d3 = divp(" Total bought: " + info[i].quantity);
       section1.appendChild(div1);
-      section1.appendChild(div2);
+      section1.appendChild(d1);
+      section1.appendChild(d2);
+      section1.appendChild(d3);
       let hr = gen('hr');
-      section1.appendChild(hr);
-      let prodInfo;
-      try {
-        let res = await fetch("/shopping/product/" + info[i].id)
-        await statusCheck(res);
-        res = await res.json();
-        prodInfo = res;
-      } catch (err) {
-        handleErr();
-      }
-
-      console.log(prodInfo);
-      let art = genCurProductArticle(prodInfo[0], false);
-      section1.appendChild(art);
       container.appendChild(section1);
     }
+  }
 
-    // let art = genCurProductArticle(info[0], false);
-    // section1.appendChild(art);
-    // container.appendChild(section1);
-
+  function divp(string) {
+    let div2 = gen('div');
+    let p2 = gen('p');
+    p2.textContent = string;
+    div2.appendChild(p2);
+    return div2;
   }
 
   function goBuy() {
@@ -546,7 +554,7 @@
     let singleUser = qs("#single .product .product-seller").textContent;
     let singlePrice = qs("#single .product .product-money").textContent
     let singleQuantity = id("count").value;
-
+    console.log(singleUser);
     let params = new FormData();
     params.append('id', singleId)
     params.append('user', singleUser);
@@ -725,6 +733,7 @@
  * Helper function that serves to handle any error that occurs the platform.
  */
   function handleErr() {
+    console.log('entered');
     let single = id('home');
     let error = id('error');
     showView("error");
