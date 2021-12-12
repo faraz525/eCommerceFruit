@@ -75,16 +75,15 @@ app.get('/shopping/product/:product', async function(req, res) {
   try {
     let db = await getDBConnection();
     let product = "'" + req.params.product + "'"; //the id of the listing item
-<<<<<<< HEAD
+    console.log(product);
     let select = 'SELECT users.username, product.name, listing.price, listing.quantity, listing.id, product.description, product.id AS prodId ';
-=======
-    let select = 'SELECT users.username, product.name, listing.price, listing.quantity, listing.id, product.description, product.id AS prod ';
->>>>>>> 0cb92c4a4374376286be5127180b6f0c56df2dbd
     let from = 'FROM users, product, listing '
     let where = 'WHERE listing.user = users.id AND product.id = listing.item AND listing.id = ' + product;
     let sql = select + from + where;
     let ex1 = await db.all(sql);
+    console.log(ex1);
     if (ex1.length < 1) {
+      console.log("bruh");
       res.type('text');
       res.status(400).send('Yikes. product does not exist.');
       return;
