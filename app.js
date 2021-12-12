@@ -75,7 +75,7 @@ app.get('/shopping/product/:product', async function(req, res) {
   try {
     let db = await getDBConnection();
     let product = "'" + req.params.product + "'"; //the id of the listing item
-    let select = 'SELECT users.username, product.name, listing.price, listing.quantity listing.id';
+    let select = 'SELECT users.username, product.name, listing.price, listing.quantity, listing.id';
     let from = 'FROM users, product, listing '
     let where = 'WHERE listing.user = users.id AND product.id = listing.item AND listing.id = ' + product;
     let ex1 = await db.all(select + from + where);
