@@ -28,8 +28,8 @@
         .split('; ')
         .find(row => row.startsWith('sessionid='))
         .split('=')[1];
-      console.log(cookieValue);
       SESSIONID = cookieValue;
+      console.log(SESSIONID);
       if (cookieValue) {
         goHome();
         enableNavButtons();
@@ -103,6 +103,11 @@
       let res = await fetch(url, { method: 'POST', body: params });
       await statusCheck(res);
       res = await res.json();
+      const cookieValue = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('sessionid='))
+        .split('=')[1];
+      SESSIONID = cookieValue;
       processLogin(res);
     } catch (err) {
       errorHandler(err);
@@ -114,7 +119,7 @@
 
     let url = '/logout';
     try {
-      let res = await fetch(url, {method: 'POST'});
+      let res = await fetch(url, { method: 'POST' });
       await statusCheck(res);
       res = await res.text();
       console.log(res);
@@ -166,11 +171,42 @@
   /**
   * Shows the history view, ensuring that the search bar is cleared
   */
-  function goHistory() {
-    console.log("this is a plea for help");
+  async function goHistory() {
     clearSearch();
     showView("history");
-    console.log("If God exists, then why do I not feel his mercy?")
+    let url = "history/" + SESSIONID;
+    try {
+      let res = await fetch(url);
+      await statusCheck(res);
+      res = await res.json();
+      processAllHistory(res);
+    } catch (err) {
+      errorHandler(err);
+    }
+  }
+
+  function processAllHistory(res) {
+    let info = res;
+    console.log(info);
+    let container = id('history');
+    let section1 = gen('section')
+    section1.classList.add('transaction-container');
+    let div1 = gen('div');
+    let p1 = gen('p')
+    p1.textContent = "Transaction ID: " + info.id;
+    div1.appendChild(p1);
+    let div2 = gen('div');
+    let p2 = gen('p')
+    p2.textContent = "Total amount: $" + info.price * info.quantity;
+    div2.appendChild(p2);
+    section1.appendChild(div1);
+    section1.appendChild(div2);
+    let hr = gen('hr');
+    section1.appendChild(hr);
+    let art = genCurProductArticle(info[0], false);
+    section1.appendChild(art);
+    container.appendChild(section1);
+
   }
 
   function goBuy() {
@@ -410,17 +446,16 @@
 
   async function inputSingleProduct(res, type) {
     let product = qs("#single .product");
-      if (product) {
-        id("single").removeChild(product);
-      }
-      let divAfter = qsa("#single > p")[1]
-      if (type === "sell") {
-        let sessionInfo = await reqSessionDetails();
-        console.log(sessionInfo);
-        res[0].quantity = 5;
-        res[0].username = sessionInfo[0].username;
-      }
-      id("single").insertBefore(genCurProductArticle(res[0], false), divAfter);
+    if (product) {
+      id("single").removeChild(product);
+    }
+    let divAfter = qsa("#single > p")[1]
+    if (type === "sell") {
+      let sessionInfo = await reqSessionDetails();
+      res[0].quantity = 5;
+      res[0].username = sessionInfo[0].username;
+    }
+    id("single").insertBefore(genCurProductArticle(res[0], false), divAfter);
   }
 
   function confirmTransaction(){
