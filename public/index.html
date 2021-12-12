@@ -22,7 +22,7 @@
         <input id='search-term' type='text'>
         <button id='search-btn' disabled>Search</button>
         <button id='home-btn' disabled>Home</button>
-        <button id='history-btn'disabled>History</button>
+        <button id='history-btn' disabled>History</button>
         <button id="sign-out-btn" disabled>Sign-out</button>
       </nav>
     </header>
@@ -32,7 +32,8 @@
 
         <!-- view where the user will login-->
         <section id="login" class="view-border hidden">
-          <label><input type="checkbox" name="newAccount" value="newAcc">Register New Account? </label>
+          <label><input type="checkbox" name="newAccount" value="newAcc">
+            Register New Account? </label>
           <form>
             <label for='email' class = "hidden">Email</label>
             <input type='email' id='email' name='email' class="hidden">
@@ -52,9 +53,12 @@
             <br>
             <label><input type="radio" name="itemsView" value="list">List View</label>
             <h3>Filters:</h3>
-            <label><input type="checkbox" name="itemsFilter" value="grains" checked>Grains</label><br>
-            <label><input type="checkbox" name="itemsFilter" value="fruits" checked>Fruits</label><br>
-            <label><input type="checkbox" name="itemsFilter" value="vegetables" checked>Vegetables</label><br>
+            <label><input type="checkbox" name="itemsFilter" value="grains" checked>
+              Grains</label><br>
+            <label><input type="checkbox" name="itemsFilter" value="fruits" checked>
+              Fruits</label><br>
+            <label><input type="checkbox" name="itemsFilter" value="vegetables" checked>
+              Vegetables</label><br>
             <button id="filter-btn">Update filters</button>
           </section>
 
@@ -95,9 +99,11 @@
             </div>
             <button id="single-submit-btn" disabled>Submit</button>
             <p id="single-response"></p>
-        </section>
+          </section>
+        </article>
         <!-- error view -->
-        <h2 id='error' class='view-border'>Our site is experincing some difficulties, please refresh!</h2>
+        <h2 id='error' class='view-border'>
+          Our site is experincing some difficulties, please refresh!</h2>
       </article>
     </main>
     <footer>

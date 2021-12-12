@@ -132,7 +132,7 @@ button:hover {
 }
 
 #login button {
-  width:fit-content;
+  width: fit-content;
 }
 
 /* visuals styles */
@@ -200,9 +200,7 @@ button:hover {
 /* history view */
 #history {
   width: 40vw;
-  padding: 5px;
   margin: auto;
-
   display: flex;
   flex-direction: column;
   box-sizing: content-box;
@@ -219,7 +217,6 @@ button:hover {
   align-items: center;
   height: fit-content;
   min-width: 90%;
-
   border: 4px;
   border-style: solid;
   border-radius: 5px;
@@ -234,24 +231,21 @@ button:hover {
   width: 250px;
 }
 
-#history > .transaction-container > div:not(.product) {
-  padding: 5px;
-}
-
-#history > .transaction-container > div:not(.product), #history > .transaction-container > div:not(.product) > p {
+#history > .transaction-container > div:not(.product),
+#history > .transaction-container > div:not(.product) > p {
   margin: 0px;
 }
 
 #history > .transaction-container > div:not(.product) {
   display: flex;
   flex-direction: row;
+  padding: 5px;
 }
 
 /* One item view */
 #view-container {
   display: flex;
   flex-direction: row;
-  align-items: center;
   justify-content: space-between;
   align-items: flex-start;
 }
@@ -314,7 +308,6 @@ button:hover {
   height: 250px;
   padding: 5px 10px;
   margin: 0px 10px 5px 10px;
-
   border-style: solid;
   border-radius: 20px;
   border-color: #3A5743;
@@ -376,11 +369,10 @@ button:hover {
   font-size: 25px;
   width: fit-content;
   margin-bottom: 8px;
-
   border: 2px;
   border-radius: 2px;
   border-bottom-style: solid;
-  border-color: #3A5743 ;
+  border-color: #3A5743;
 }
 
 .product h2, .product .product-values .product-money {
@@ -409,7 +401,8 @@ button:hover {
   justify-content: right;
 }
 
-.product .product-labels p, .product .product-values .product-amount-tag, .product .product-values .product-amount {
+.product .product-labels p, .product .product-values .product-amount-tag,
+.product .product-values .product-amount {
   height: fit-content;
   margin: 0;
 }
