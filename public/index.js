@@ -38,6 +38,14 @@
     let historyBtn = id("history-btn");
     historyBtn.addEventListener("click", goHistory);
 
+    let viewRadioGrid = qsa('input[name=itemsView]')[0];
+    viewRadioGrid.addEventListener("input", toggleHomeView);
+    let viewRadioList = qsa('input[name=itemsView]')[1];
+    viewRadioList.addEventListener("input", toggleHomeView);
+
+    let filterBtn = id("filter-btn");
+    filterBtn.addEventListener("click", updateFilters);
+
     console.log(qs('#login form'));
     qs('#login form').addEventListener('submit', (ev) => {
       ev.preventDefault();
@@ -117,18 +125,13 @@
     id("single").classList.remove("hidden");
   }
 
-  /**
-  * Shows the user view, ensuring that it is refreshed and that the search bar is cleared.
-  */
-  function goUser() {
-    clearSearch();
-    id("user").innerHTML = "";
-    showView("user");
-    reqUserYips(this.textContent);
+  function toggleHomeView() {
+    id('home').classList.toggle('gridLayout');
+    id('home').classList.toggle('listLayout');
   }
 
   /**
-  * Shows the cart view, ensuring that the search bar is cleared
+  * Shows the history view, ensuring that the search bar is cleared
   */
    function goHistory() {
      console.log("this is a plea for help");
@@ -177,7 +180,8 @@
     let artcl = gen("article");
     let igIcn = gen("img");
     let dInfo = gen("div");
-    let dPrdctHvr = genProductHover();
+    let dPrdctHvrBuy = genProductHoverBuy();
+    let dPrdctHvrSell = genProductHoverSell();
     let dPrdctLbl = genProductLabel(curProduct);
     let dPrdctVal = genProductValue(curProduct);
 
@@ -186,7 +190,8 @@
     igIcn.src = "img/" + curProduct.name + ".jpg";
     igIcn.alt = curProduct.name;
 
-    artcl.appendChild(dPrdctHvr);
+    artcl.appendChild(dPrdctHvrBuy);
+    artcl.appendChild(dPrdctHvrSell);
     artcl.appendChild(igIcn);
     dInfo.appendChild(dPrdctLbl);
     dInfo.appendChild(dPrdctVal);
@@ -199,16 +204,33 @@
   * @param {JSON} curYip Current yip to use
   * @returns {div} a div containing the name and yip of curYip
   */
-   function genProductHover() {
-    let dHover = gen("div");
-    let pHoverText = gen("p");
+   function genProductHoverBuy() {
+    let dHoverBuy = gen("div");
+    let pHoverTextBuy = gen("p");
 
-    dHover.classList.add('product-hover-div');
-    pHoverText.textContent = "Add to Cart";
-    pHoverText.classList.add('product-hover-text');
+    dHoverBuy.classList.add('product-hover-div-buy');
+    pHoverTextBuy.textContent = "Buy from this listing";
+    pHoverTextBuy.classList.add('product-hover-text');
 
-    dHover.appendChild(pHoverText);
-    return dHover;
+    dHoverBuy.appendChild(pHoverTextBuy);
+    return dHoverBuy;
+  }
+
+  /**
+  * Creates and returns a div which represents the content of curYip
+  * @param {JSON} curYip Current yip to use
+  * @returns {div} a div containing the name and yip of curYip
+  */
+   function genProductHoverSell() {
+    let dHoverSell = gen("div");
+    let pHoverTextSell = gen("p");
+
+    dHoverSell.classList.add('product-hover-div-sell');
+    pHoverTextSell.textContent = "Sell this kind of item";
+    pHoverTextSell.classList.add('product-hover-text');
+
+    dHoverSell.appendChild(pHoverTextSell);
+    return dHoverSell;
   }
 
   /**
