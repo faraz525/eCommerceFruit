@@ -211,7 +211,6 @@
   * @returns {article} an article containing all of the appropriate information of the yip
   */
   function genCurProductArticle(curProduct, includeHovers) {
-    console.log(curProduct);
     let artcl = gen("article");
     let igIcn = gen("img");
     let dInfo = gen("div");
@@ -331,15 +330,48 @@
     return dValue;
   }
 
-  function updateSingle(product, type) {
+  async function updateSingle(product, type) {
     console.log(product);
     let title = id("single-title");
+    let res;
     if (type === "buy") {
-      title.textContent = "BUY BUY BUY";
+      title.textContent = "How many of this listing would you like to buy?"
+      res = await reqSingle(product.id.split("-")[0], type);;
     } else if (type === "sell") {
-      title.textContent = "SELL SELL SELL";
+      title.textContent = "You found some of this product lying around, sell some!";
+      res = await reqSingle(product.id.split("-")[0], type);
+    }
+    let des = id("single-description");
+    des.textContent = res.description;
+  }
+
+  async function reqSingle(productID, type) {
+    let url = BASE_URL + "product/" + productID;
+    console.log(url);
+    try {
+      let res = await fetch(url);
+      await statusCheck(res);
+      res = await res.json();
+      inputSingle(res, type);
+      return res[0];
+    } catch (err) {
+      errorHandler(err);
     }
   }
+
+  function inputSingle(res, type) {
+    let product = qs("#single .product");
+      if (product) {
+        id("single").removeChild(product);
+      }
+      let divAfter = qsa("#single > p")[1]
+      if (type === "sell") {
+        res[0].quantity = 5;
+        res[0].username = "YOU";
+      }
+      id("single").insertBefore(genCurProductArticle(res[0], false), divAfter);
+  }
+
 
   /**
   * Checks the contents of the search bar, and makes the search button appropiately enabled or
@@ -419,22 +451,6 @@
       if (hide) {
         articles[i].classList.add('hidden');
       }
-    }
-  }
-
-  /**
-  * Fetches information from the API to get yips made by a specific user
-  * @param {String} userName the name of the user to search for
-  */
-  async function reqUserYips(userName) {
-    let url = BASE_URL + "user/" + userName;
-    try {
-      let res = await fetch(url);
-      await statusCheck(res);
-      res = await res.json();
-      processUserYips(res);
-    } catch (err) {
-      errorHandler(err);
     }
   }
 
