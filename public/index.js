@@ -61,6 +61,15 @@
     let signOutBtn = id('sign-out-btn');
     signOutBtn.addEventListener("click", logOut);
 
+    let countInput = id("count");
+    countInput.addEventListener("input", clearConfirmation);
+
+    let confirmTransactionBtn = id('single-confirm-btn');
+    confirmTransactionBtn.addEventListener("click", confirmTransaction);
+
+    let submitTransactionBtn = id('single-submit-btn');
+    submitTransactionBtn.addEventListener("click", submitTransaction);
+
     console.log(qs('#login form'));
     qs('#login form').addEventListener('submit', (ev) => {
       ev.preventDefault();
@@ -137,6 +146,46 @@
     }
   }
 
+  /**
+  * Shows the home view, ensuring that all yips are visible and that the search bar is cleared.
+  */
+   function goHome() {
+    clearSearch();
+    showProducts();
+    showView('home');
+    id("visuals").classList.remove("hidden");
+  }
+
+  function toggleHomeView() {
+    id('home').classList.toggle('gridLayout');
+    id('home').classList.toggle('listLayout');
+  }
+
+  /**
+  * Shows the history view, ensuring that the search bar is cleared
+  */
+  function goHistory() {
+    console.log("this is a plea for help");
+    clearSearch();
+    showView("history");
+    console.log("If God exists, then why do I not feel his mercy?")
+  }
+
+  function goBuy() {
+    showSingle();
+    updateSingle(this.parentElement, "buy");
+  }
+
+  function goSell() {
+    showSingle();
+    updateSingle(this.parentElement, "sell");
+  }
+
+  function showSingle() {
+    clearSearch();
+    id("single").classList.remove("hidden");
+  }
+
   function enableNavButtons() {
     let navBtns = qsa("nav button");
     for (let i = 1; i < navBtns.length; i++) {
@@ -162,46 +211,6 @@
     } else {
       searchDisable();
     }
-  }
-
-  /**
-  * Shows the home view, ensuring that all yips are visible and that the search bar is cleared.
-  */
-  function goHome() {
-    clearSearch();
-    showProducts();
-    showView('home');
-    id("visuals").classList.remove("hidden");
-  }
-
-  function toggleHomeView() {
-    id('home').classList.toggle('gridLayout');
-    id('home').classList.toggle('listLayout');
-  }
-
-  /**
-  * Shows the history view, ensuring that the search bar is cleared
-  */
-  function goHistory() {
-    console.log("this is a plea for help");
-    clearSearch();
-    showView("history");
-    console.log("If God exists, then why do I not feel his mercy?")
-  }
-
-  function showSingle() {
-    clearSearch();
-    id("single").classList.remove("hidden");
-  }
-
-  function goBuy() {
-    showSingle();
-    updateSingle(this.parentElement, "buy");
-  }
-
-  function goSell() {
-    showSingle();
-    updateSingle(this.parentElement, "sell");
   }
 
   /**
@@ -360,17 +369,22 @@
   }
 
   async function updateSingle(product, type) {
-    console.log(product);
     let title = id("single-title");
-    let res;
+    let countInput = id("count");
+    countInput.value = 1;
+    let res = await reqSingleProduct(product.id.split("-")[0], type);
     if (type === "buy") {
       title.textContent = "How many of this listing would you like to buy?"
+      countInput.max = res.quantity;
     } else if (type === "sell") {
       title.textContent = "You found 5 of this product lying around, sell some!";
+      countInput.max = 5;
     }
-    res = await reqSingleProduct(product.id.split("-")[0], type);
     let des = id("single-description");
     des.textContent = res.description;
+    let submitBtn = id('single-submit-btn');
+    submitBtn.removeAttribute("class");
+    submitBtn.classList.add(type);
   }
 
   async function reqSingleProduct(productID, type) {
@@ -395,10 +409,81 @@
       let divAfter = qsa("#single > p")[1]
       if (type === "sell") {
         let sessionInfo = await reqSessionDetails();
+        console.log(sessionInfo);
         res[0].quantity = 5;
         res[0].username = sessionInfo[0].username;
       }
       id("single").insertBefore(genCurProductArticle(res[0], false), divAfter);
+  }
+
+  function confirmTransaction(){
+    let countVal = id("count").value;
+    let name = qs("#single .product h2");
+    let price = qs("#single .product .product-money");
+    let smry = id("single-summary");
+    smry.textContent = countVal + " " + name.textContent.toLowerCase();
+    let sumPrice = id("single-sum-price");
+    sumPrice.textContent = parseInt(price.textContent) * parseInt(countVal);
+    id("single-submit-btn").disabled = false;
+  }
+
+  function submitTransaction() {
+    clearConfirmation();
+    let transactionType = id("single-submit-btn").classList[0];
+    if (transactionType === "buy") {
+      postBuy();
+      updateQuantities();
+    } else if (transactionType === "sell") {
+      postSell();
+    }
+    id("count").value = 1;
+  }
+
+  function clearConfirmation() {
+    id("single-submit-btn").disabled = true;
+    id("single-summary").textContent = "";
+    id("single-sum-price").textContent = "";
+  }
+
+  async function postBuy(){
+    let singleId = qs("#single .product").id.split("-")[0];
+    let singleUser = qs("#single .product .product-seller").textContent;
+    let singlePrice = qs("#single .product .product-money").textContent
+    let singleQuantity = id("count").value;
+
+    let params = new FormData();
+    params.append('id', singleId)
+    params.append('user', singleUser);
+    params.append('price', singlePrice);
+    params.append('quantity', singleQuantity);
+
+    let urlBuy = BASE_URL + "buy"
+    let urlHistory = "update/history"
+    try {
+      let res = await fetch(urlBuy, { method: 'POST', body: params });
+      await statusCheck(res);
+      res = await fetch(urlHistory, { method: 'POST', body: params });
+      await statusCheck(res);
+    } catch (err) {
+      errorHandler(err);
+    }
+  }
+
+  function updateQuantities() {
+    let singleId = qs("#single .product").id.split("-")[0];
+    let curQuantity = parseInt(qs("#single .product-amount").textContent);
+    let singleQuantity = id("count").value;
+    let newQuantity = curQuantity - singleQuantity;
+    id('count').max = newQuantity;
+    qs("#single .product .product-amount").textContent = newQuantity;
+    let allListings = qsa("#home .product");
+    let neededListing;
+    for (let i = 0; i < allListings.length; i++) {
+      if (allListings[i].id.split("-")[0] === singleId) {
+        neededListing = allListings[i];
+      }
+    }
+    neededListing.querySelector(".product-amount").textContent = newQuantity;
   }
 
   async function reqSessionDetails() {
