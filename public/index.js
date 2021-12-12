@@ -327,8 +327,10 @@
     let dPrdctLbl = genProductLabel(curProduct);
     let dPrdctVal = genProductValue(curProduct);
 
+    console.log(curProduct);
+
     artcl.classList.add('product');
-    artcl.id = curProduct.id + "-" + curProduct.type;
+    artcl.id = curProduct.id + "-" + curProduct.type + "-" + curProduct.prodId;
     igIcn.src = "img/" + curProduct.name + ".jpg";
     igIcn.alt = curProduct.name;
 
@@ -447,6 +449,9 @@
     let countInput = id("count");
     countInput.value = 1;
     let res = await reqSingleProduct(product.id.split("-")[0], type);
+    console.log(res);
+    await inputSingleProduct(res, type);
+    res = res[0];
     if (type === "buy") {
       title.textContent = "How many of this listing would you like to buy?"
       countInput.max = res.quantity;
@@ -461,15 +466,14 @@
     submitBtn.classList.add(type);
   }
 
-  async function reqSingleProduct(productID, type) {
+  async function reqSingleProduct(productID) {
     let url = BASE_URL + "product/" + productID;
     console.log(url);
     try {
       let res = await fetch(url);
       await statusCheck(res);
       res = await res.json();
-      await inputSingleProduct(res, type);
-      return res[0];
+      return res;
     } catch (err) {
       errorHandler(err);
     }
@@ -511,7 +515,6 @@
     } else if (transactionType === "sell") {
       postSell();
     }
-    id("count").value = 1;
   }
 
   function clearConfirmation() {
@@ -561,10 +564,10 @@
 
   async function postHistory(){
     let userId = await reqSessionDetails();
-    userId = userId[0].username;
+    userId = userId[0].id;
     let singleItemId = qs("#single .product").id.split("-")[0];
-    let singleItemName = qs("#single .product h2")
-    let singlePrice = qs("#single .product .product-money").textContent
+    let singleItemName = qs("#single .product h2").textContent;
+    let singlePrice = qs("#single .product .product-money").textContent;
     let singleQuantity = id("count").value;
 
     let params = new FormData();
@@ -588,9 +591,9 @@
 
   async function postSell(){
     let userId = await reqSessionDetails();
-    userId = userId[0]
+    userId = "" + userId[0].id;
     console.log(userId);
-    let singleId = qs("#single .product").id.split("-")[0];
+    let singleId = qs("#single .product").id.split("-")[2];
     console.log(singleId);
     let singlePrice = qs("#single .product .product-money").textContent
     console.log(singlePrice);
@@ -599,7 +602,7 @@
 
     let params = new FormData();
     params.append('name', userId)
-    params.append('iteitemm', singleId);
+    params.append('item', singleId);
     params.append('price', singlePrice);
     params.append('quantity', singleQuantity);
 
@@ -608,7 +611,11 @@
     try {
       let res = await fetch(url, { method: 'POST', body: params });
       await statusCheck(res);
-      postHistory();
+      res = await res.text();
+      console.log(res);
+      let listingJson = await reqSingleProduct(res);
+      console.log(listingJson[0]);
+      id("home").appendChild(genCurProductArticle(listingJson[0], true));
     } catch (err) {
       errorHandler(err);
     }
