@@ -57,6 +57,9 @@
     let filterBtn = id("filter-btn");
     filterBtn.addEventListener("click", updateFilters);
 
+    let signOutBtn = id('sign-out-btn');
+    signOutBtn.addEventListener("click", logOut);
+
     console.log(qs('#login form'));
     qs('#login form').addEventListener('submit', (ev) => {
       ev.preventDefault();
@@ -73,6 +76,10 @@
     email.classList.toggle('hidden');
   }
 
+  function revealLoginPage() {
+    id('login').classList.remove('hidden');
+  }
+
   async function loginUser() {
 
     let url = '/login'
@@ -87,6 +94,18 @@
       await statusCheck(res);
       res = await res.json();
       processLogin(res);
+    } catch (err) {
+      errorHandler(err);
+    }
+  }
+
+  async function logOut() {
+    let url = '/logout';
+    try {
+      let res = await fetch(url, {method: 'POST'});
+      await statusCheck(res);
+      res = await res.text();
+      console.log(res);
     } catch (err) {
       errorHandler(err);
     }
