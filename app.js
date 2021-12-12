@@ -127,6 +127,7 @@ app.get('/history/:user', async function(req, res) {
  * all of the data.
  */
 app.post('/update/history', async function(req, res) {
+  res.type('text');
   try {
     let db = await getDBConnection();
     let id = req.body.id; //id of the user
@@ -141,7 +142,10 @@ app.post('/update/history', async function(req, res) {
     }
     let sql = 'INSERT INTO transactions (nameid, item, quantity, price, itemName) VALUES(?, ?, ?, ?, ?)'
     let ex1 = await db.run(sql, [id, item, quantity, price, itemname]);
-    res.json(ex1);
+    let sql2 = 'SELECT id FROM transactions WHERE nameid = ? AND item = ? AND quantity = ?';
+    let ex2 = await db.run(sql2, [id, item, quantity]);
+    console.log(ex2.lastID);
+    res.send(ex2.lastID + "");
   } catch (err) {
     console.log(err);
     res.type('text');
