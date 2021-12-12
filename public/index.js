@@ -32,6 +32,7 @@
       SESSIONID = cookieValue;
       if (cookieValue) {
         goHome();
+        enableNavButtons();
       }
     }
     let loginToggle = qs('#login label input');
@@ -116,7 +117,7 @@
     if (res.length > 0) {
       console.log("Success");
       goHome();
-
+      enableNavButtons();
     }
   }
 
@@ -133,6 +134,13 @@
       } else {
         sections[i].classList.add('hidden');
       }
+    }
+  }
+
+  function enableNavButtons() {
+    let navBtns = qsa("nav button");
+    for (let i = 1; i < navBtns.length; i++) {
+      navBtns[i].disabled = false;
     }
   }
 
@@ -357,42 +365,55 @@
     let res;
     if (type === "buy") {
       title.textContent = "How many of this listing would you like to buy?"
-      res = await reqSingle(product.id.split("-")[0], type);;
     } else if (type === "sell") {
-      title.textContent = "You found some of this product lying around, sell some!";
-      res = await reqSingle(product.id.split("-")[0], type);
+      title.textContent = "You found 5 of this product lying around, sell some!";
     }
+    res = await reqSingleProduct(product.id.split("-")[0], type);
     let des = id("single-description");
     des.textContent = res.description;
   }
 
-  async function reqSingle(productID, type) {
+  async function reqSingleProduct(productID, type) {
     let url = BASE_URL + "product/" + productID;
     console.log(url);
     try {
       let res = await fetch(url);
       await statusCheck(res);
       res = await res.json();
-      inputSingle(res, type);
+      await inputSingleProduct(res, type);
       return res[0];
     } catch (err) {
       errorHandler(err);
     }
   }
 
-  function inputSingle(res, type) {
+  async function inputSingleProduct(res, type) {
     let product = qs("#single .product");
       if (product) {
         id("single").removeChild(product);
       }
       let divAfter = qsa("#single > p")[1]
       if (type === "sell") {
+        let sessionInfo = await reqSessionDetails();
         res[0].quantity = 5;
-        res[0].username = "YOU";
+        res[0].username = sessionInfo[0].username;
       }
       id("single").insertBefore(genCurProductArticle(res[0], false), divAfter);
   }
 
+  async function reqSessionDetails() {
+    console.log(SESSIONID);
+    let url = "/getuser/" + SESSIONID;
+    console.log(url);
+    try {
+      let res = await fetch(url);
+      await statusCheck(res);
+      res = await res.json();
+      return res;
+    } catch (err) {
+      errorHandler(err);
+    }
+  }
 
   /**
   * Checks the contents of the search bar, and makes the search button appropiately enabled or
@@ -413,7 +434,6 @@
   */
   async function reqSearch() {
     console.log(id("searchType").value);
-    //showView('home');
     let url = BASE_URL + "shop?search=" + id("search-term").value.trim() + "&type=" + id("searchType").value;
     try {
       let res = await fetch(url);
@@ -473,39 +493,6 @@
         articles[i].classList.add('hidden');
       }
     }
-  }
-
-  /**
-  * Adds all yips in responseData, as ps, into a new article container
-  * @param {JSON} responseData the list of yips to process
-  */
-  function processUserYips(responseData) {
-    let container = gen("article");
-    container.classList.add("single");
-    let head2 = gen("h2");
-    head2.textContent = "Yips shared by " + responseData[0].name + ":";
-    container.appendChild(head2);
-
-    let len = Object.keys(responseData).length;
-    let yipNum = 1;
-    for (let i = 0; i < len; i++) {
-      let curYip = genUserCurYip(responseData[i], yipNum);
-      yipNum++;
-      container.appendChild(curYip);
-    }
-    id("user").appendChild(container);
-  }
-
-  /**
-  * Creates and returns a p which represents the content of curYip
-  * @param {JSON} curUserYip Current yip to use
-  * @param {number} num the number count that this yip is
-  * @returns {p} a p containing the yip of curYip
-  */
-  function genUserCurYip(curUserYip, num) {
-    let p = gen("p");
-    p.textContent = "Yip " + num + ": " + curUserYip.yip + " #" + curUserYip.hashtag;
-    return p;
   }
 
   /**
