@@ -22,8 +22,8 @@
   */
   function init() {
     reqAllitems();
-    let id = window.
-    console.log(id);
+    let ide = window.localStorage.getItem('sessionid');
+    console.log(ide);
     let searchTerm = id("search-term");
     searchTerm.addEventListener("input", searchCheck);
 
