@@ -13,6 +13,7 @@
 (function () {
 
   let BASE_URL = "/shopping/";
+  let SESSIONID;
 
   window.addEventListener("load", init);
 
@@ -28,6 +29,7 @@
         .find(row => row.startsWith('sessionid='))
         .split('=')[1];
       console.log(cookieValue);
+      SESSIONID = cookieValue;
       if (cookieValue) {
         goHome();
       }

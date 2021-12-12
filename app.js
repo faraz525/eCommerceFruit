@@ -158,8 +158,6 @@ app.post('/login', async function(req, res) {
     let db = await getDBConnection();
     let password = req.body.password;
     let name = req.body.user;
-    res.cookie("username", name);
-    res.cookie("password", password);
     if (name.length < 1 || password.length < 1) {
       res.type('text');
       res.status(400).send('Missing one or more of the required params.');
@@ -202,8 +200,11 @@ app.post('/signup', async function(req, res) {
       res.status(400).send('Username already taken');
       return;
     } else {
-      let sql = 'INSERT INTO users (username, password, email, monies) VALUES(?,?,?,?)';
-      let ex2 = await db.run(sql, [name, password, email, 1000]);
+      let sql = 'INSERT INTO users (username, password, email, monies, sessionId) VALUES(?,?,?,?,?)';
+      let id = await getSessionId();
+      await setSessionId(id, name);
+      res.cookie('sessionid', id, {expires: new Date(Date.now() + COOKIE_EXPIRATION)});
+      let ex2 = await db.run(sql, [name, password, email, 1000, id]);
     }
     res.type('text');
     res.send("success");
@@ -293,12 +294,20 @@ app.post('/logout', function(req, res) {
   }
 });
 
-app.get('/cookies', async function(req, res) {
+app.get('/getuser/:user', async function(req, res) {
   res.type('text');
-  let id = req.cookies['sessionid'];
-  console.log(id);
-  console.log(aId);
-  res.send(id);
+  let nameId = req.params.user ;
+  try {
+    let db = await getDBConnection();
+    let sql = 'SELECT username FROM users WHERE sessionId = ' + "'" + nameId + "'";
+    let id = await db.all(sql);
+    res.send(id);
+  } catch (err) {
+    console.log(err);
+    res.status('400').send('Cannot grab the user');
+  }
+
+
 });
 
 /**
