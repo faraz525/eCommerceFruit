@@ -75,7 +75,7 @@ app.get('/shopping/product/:product', async function(req, res) {
   try {
     let db = await getDBConnection();
     let product = "'" + req.params.product + "'"; //the id of the listing item
-    let select = 'SELECT users.username, product.name, listing.price, listing.quantity, listing.id, product.description ';
+    let select = 'SELECT users.username, product.name, listing.price, listing.quantity, listing.id, product.description, product.id AS prod ';
     let from = 'FROM users, product, listing '
     let where = 'WHERE listing.user = users.id AND product.id = listing.item AND listing.id = ' + product;
     let sql = select + from + where;
@@ -304,7 +304,7 @@ app.post('/logout', function(req, res) {
 
 app.get('/getuser/:user', async function(req, res) {
   res.type('text');
-  let nameId = req.params.user ;
+  let nameId = req.params.user;
   try {
     let db = await getDBConnection();
     let sql = 'SELECT username, id FROM users WHERE sessionId = ' + "'" + nameId + "'";

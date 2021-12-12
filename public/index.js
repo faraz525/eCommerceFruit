@@ -110,7 +110,7 @@
       SESSIONID = cookieValue;
       processLogin(res);
     } catch (err) {
-      errorHandler(err);
+      handleErr();
     }
   }
 
@@ -124,7 +124,7 @@
       res = await res.text();
       console.log(res);
     } catch (err) {
-      errorHandler(err);
+      handleErr();
     }
   }
 
@@ -156,7 +156,7 @@
   /**
   * Shows the home view, ensuring that all yips are visible and that the search bar is cleared.
   */
-   function goHome() {
+  function goHome() {
     clearSearch();
     showProducts();
     showView('home');
@@ -181,7 +181,7 @@
       res = await res.json();
       processAllHistory(res);
     } catch (err) {
-      errorHandler(err);
+      handleErr();
     }
   }
 
@@ -190,7 +190,7 @@
     console.log(info);
     let container = id('history');
     let len = Object.keys(res).length;
-    for(let i = 0; i < len; i++) {
+    for (let i = 0; i < len; i++) {
       let section1 = gen('section')
       section1.classList.add('transaction-container');
       let div1 = gen('div');
@@ -212,7 +212,7 @@
         res = await res.json();
         prodInfo = res;
       } catch (err) {
-        res.status(400).send("No transaction history ");
+        handleErr();
       }
       console.log(prodInfo);
       let art = genCurProductArticle(prodInfo[0], false);
@@ -241,12 +241,12 @@
     id("single").classList.remove("hidden");
   }
 
-  function goLogin(){
+  function goLogin() {
     clearSearch();
     showView("login");
     disableNavButtons();
     let loginFields = qsa('#login input');
-    for(let i = 0; i < loginFields.length; i++) {
+    for (let i = 0; i < loginFields.length; i++) {
       loginFields[i].value = "";
     }
   }
@@ -296,7 +296,7 @@
       res = await res.json();
       processAllitems(res);
     } catch (err) {
-      errorHandler(err);
+      handleErr();
     }
   }
 
@@ -471,7 +471,7 @@
       await inputSingleProduct(res, type);
       return res[0];
     } catch (err) {
-      errorHandler(err);
+      handleErr();
     }
   }
 
@@ -489,7 +489,7 @@
     id("single").insertBefore(genCurProductArticle(res[0], false), divAfter);
   }
 
-  function confirmTransaction(){
+  function confirmTransaction() {
     id("single-response").textContent = "";
 
     let countVal = id("count").value;
@@ -537,7 +537,7 @@
     neededListing.querySelector(".product-amount").textContent = newQuantity;
   }
 
-  async function postBuy(){
+  async function postBuy() {
     let singleId = qs("#single .product").id.split("-")[0];
     let singleUser = qs("#single .product .product-seller").textContent;
     let singlePrice = qs("#single .product .product-money").textContent
@@ -555,11 +555,11 @@
       await statusCheck(resBuy);
       postHistory();
     } catch (err) {
-      errorHandler(err);
+      handleErr();
     }
   }
 
-  async function postHistory(){
+  async function postHistory() {
     let userId = await reqSessionDetails();
     userId = userId[0].username;
     let singleItemId = qs("#single .product").id.split("-")[0];
@@ -582,11 +582,11 @@
       console.log(resHistory);
       id("single-response").textContent = "Transaction ID: " + resHistory;
     } catch (err) {
-      errorHandler(err);
+      handleErr();
     }
   }
 
-  async function postSell(){
+  async function postSell() {
     let userId = await reqSessionDetails();
     userId = userId[0]
     console.log(userId);
@@ -610,7 +610,7 @@
       await statusCheck(res);
       postHistory();
     } catch (err) {
-      errorHandler(err);
+      handleErr();
     }
   }
 
@@ -624,7 +624,7 @@
       res = await res.json();
       return res;
     } catch (err) {
-      errorHandler(err);
+      handleErr();
     }
   }
 
@@ -655,7 +655,7 @@
       id("search-btn").disabled = true;
       console.log(res);
     } catch (err) {
-      errorHandler(err);
+      handleErr();
     }
   }
 
@@ -709,19 +709,19 @@
   }
 
   /**
-  * Disables all website functionality and displays the error biew
-  * @param {text} err The content of the error message
-  */
-  function errorHandler(err) {
-    /*
-    id('yipper-data').classList.add('hidden');
-    id('error').classList.remove('hidden');
-    let navBtns = qsa("nav button");
-    for (let i = 0; i < navBtns.length; i++) {
-      navBtns[i].disabled = true;
-    }
-    */
-    //console.error(err);
+ * Helper function that serves to handle any error that occurs the platform.
+ */
+  function handleErr() {
+    let single = id('home');
+    let error = id('error');
+    let search = id('search-btn');
+    let home = id('home-btn');
+    let yip = id('yip-btn');
+    single.classList.add('hidden');
+    error.classList.remove('hidden');
+    search.disabled = true;
+    home.disabled = true;
+    yip.disabled = true;
   }
 
   /** ------------------------------ Helper Functions  ------------------------------ */
