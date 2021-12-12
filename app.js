@@ -302,6 +302,7 @@ app.post('/logout', function(req, res) {
   }
 });
 
+//This api gets information for a user based on their session id
 app.get('/getuser/:user', async function(req, res) {
   res.type('text');
   let nameId = req.params.user;
