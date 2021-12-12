@@ -35,7 +35,7 @@ app.get('/shopping/shop', async function(req, res) {
       await db.close();
       res.json(ex1);
     } else {
-      let sql1 = 'SELECT users.username, product.name, listing.price, listing.quantity, listing.id ';
+      let sql1 = 'SELECT users.username, product.name, listing.price, listing.quantity, listing.id, product.type ';
       let sql2 = 'FROM listing, users, product ';
       let sql3 = 'WHERE listing.user = users.id AND listing.item = product.id';
       let ex1 = await db.all(sql1 + sql2 + sql3);
@@ -263,6 +263,25 @@ app.post('/shopping/buy', async function(req, res) {
   }
 });
 
+// Logs a user out by expiring their cookie.
+app.post('/logout', function(req, res) {
+  res.type('text');
+  let id = req.cookies['sessionid'];
+  if (id) {
+    res.clearCookie('sessionid');
+    res.send('Successfully logged out!');
+  } else {
+    res.send('Already logged out.');
+  }
+});
+
+app.get('/cookies', function(req, res) {
+  res.type('text');
+  let id = req.cookies['sessionid'];
+  console.log(id);
+  res.send(id);
+});
+
 /**
  * Sets the session id in the database to the given one for the given user.
  * @param {string} id - The Session id to set
@@ -275,17 +294,6 @@ app.post('/shopping/buy', async function(req, res) {
   await db.close();
 }
 
-// Logs a user out by expiring their cookie.
-app.post('/logout', function(req, res) {
-  res.type('text');
-  let id = req.cookies['sessionid'];
-  if (id) {
-    res.clearCookie('sessionid');
-    res.send('Successfully logged out!');
-  } else {
-    res.send('Already logged out.');
-  }
-});
 
 /**
  * Generates an unused sessionid and returns it to the user.

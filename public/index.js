@@ -22,7 +22,12 @@
   */
   function init() {
     reqAllitems();
+<<<<<<< HEAD
 
+=======
+    let ide = window.localStorage.getItem('sessionid');
+    console.log(ide);
+>>>>>>> 0f51418761c15dff6136bdb0c200577771372a9b
     let searchTerm = id("search-term");
     searchTerm.addEventListener("input", searchCheck);
 
