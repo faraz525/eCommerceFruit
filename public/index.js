@@ -22,13 +22,15 @@
   */
   function init() {
     reqAllitems();
-    const cookieValue = document.cookie
-    .split('; ')
-    .find(row => row.startsWith('sessionid='))
-    .split('=')[1];
-    console.log(cookieValue);
-    if(cookieValue) {
-      goHome();
+    if (document.cookie) {
+      const cookieValue = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('sessionid='))
+        .split('=')[1];
+      console.log(cookieValue);
+      if (cookieValue) {
+        goHome();
+      }
     }
     let loginToggle = qs('#login label input');
     loginToggle.addEventListener("input", toggleLogin);
@@ -241,7 +243,7 @@
   * @param {JSON} curYip Current yip to use
   * @returns {div} a div containing the name and yip of curYip
   */
-   function genProductHoverBuy() {
+  function genProductHoverBuy() {
     let dHoverBuy = gen("div");
     let pHoverTextBuy = gen("p");
 
@@ -258,7 +260,7 @@
   * @param {JSON} curYip Current yip to use
   * @returns {div} a div containing the name and yip of curYip
   */
-   function genProductHoverSell() {
+  function genProductHoverSell() {
     let dHoverSell = gen("div");
     let pHoverTextSell = gen("p");
 
@@ -374,8 +376,8 @@
   function updateFilters() {
     let filters = [];
     let filterBoxes = qsa("#visuals input[name=itemsFilter]");
-    for(let i = 0; i < filterBoxes.length; i++) {
-      if(filterBoxes[i].checked === false) {
+    for (let i = 0; i < filterBoxes.length; i++) {
+      if (filterBoxes[i].checked === false) {
         filters.push(filterBoxes[i].value);
       }
     }
@@ -403,13 +405,13 @@
     for (let i = 0; i < articles.length; i++) {
       let hide = false;
       if (filter === 'type') {
-        if(match.includes(articles[i].id.split("-")[1])) {
+        if (match.includes(articles[i].id.split("-")[1])) {
           console.log();
           hide = true;
         }
       }
       if (filter === "id") {
-        if(match.includes(articles[i].id.split("-")[0])) {
+        if (match.includes(articles[i].id.split("-")[0])) {
           console.log();
           hide = true;
         }
