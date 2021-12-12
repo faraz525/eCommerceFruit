@@ -22,7 +22,14 @@
   */
   function init() {
     reqAllitems();
-
+    const cookieValue = document.cookie
+    .split('; ')
+    .find(row => row.startsWith('sessionid='))
+    .split('=')[1];
+    console.log(cookieValue);
+    if(cookieValue) {
+      goHome();
+    }
     let loginToggle = qs('#login label input');
     loginToggle.addEventListener("input", toggleLogin);
 
