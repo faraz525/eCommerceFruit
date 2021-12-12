@@ -35,12 +35,12 @@
           <label><input type="checkbox" name="newAccount" value="newAcc">Register New Account? </label>
           <form>
             <label for='email' class = "hidden">Email</label>
-            <input type='text' id='email' name='email' class="hidden">
+            <input type='email' id='email' name='email' class="hidden">
             <label for='name'>Username</label>
             <input type='text' id='name' name='name' required>
             <label for='password'>Password</label>
-            <input type='text' id='password' name='password' required>
-            <button>Submit</button>
+            <input type='password' id='password' name='password' required>
+            <button class="login">Submit</button>
           </form>
         </section>
 
@@ -82,7 +82,7 @@
             <p id="single-description">Fine sourced plant that gets you very strong!</p>
             <div>
               <label for='count'>count: </label>
-              <input type='number' min="1" id='count' name='count' value="1" required>
+              <input type='number' min="0" id='count' name='count' value="1" required>
               <button id="single-confirm-btn">Confirm</button>
             </div>
             <div>

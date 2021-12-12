@@ -163,10 +163,9 @@
   /** ------------------------------ Login Functions  ------------------------------ */
   async function updateUser() {
     let user = await reqSessionDetails();
-    console.log(user);
     let moneyTab = id('account-balance');
-    if(user[0]) {
-      moneyTab.textContent = user[0].monies;
+    if(user) {
+      moneyTab.textContent = user.monies;
     } else {
       moneyTab.textContent = 0;
     }
@@ -178,6 +177,9 @@
     let email = qs('#login form #email');
     email.required = !email.required;
     email.classList.toggle('hidden');
+    let submitBtn = qs("#login form button");
+    submitBtn.classList.toggle('login')
+    submitBtn.classList.toggle('signup')
   }
 
   async function loginUser() {
@@ -187,6 +189,16 @@
     params.append('user', user);
     params.append('password', password);
 
+    if(qs("#login form button").classList.contains("login")) {
+      postLogin(params);
+    } else if (qs("#login form button").classList.contains("signup")) {
+      let email = id("email").value
+      params.append('email', email);
+      postSignup(params);
+    }
+  }
+
+  async function postLogin(params) {
     let url = '/login';
     try {
       let res = await fetch(url, { method: 'POST', body: params });
@@ -197,6 +209,27 @@
         .find(row => row.startsWith('sessionid='))
         .split('=')[1];
       sessionId = cookieValue;
+      processLogin(res);
+    } catch (err) {
+      handleErr(err);
+    }
+  }
+
+  async function postSignup(params) {
+    let url = '/signup';
+    try {
+      let res = await fetch(url, { method: 'POST', body: params });
+      await statusCheck(res);
+      console.log(res);
+      res = await res.text();
+      console.log(res);
+      const cookieValue = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('sessionid='))
+        .split('=')[1];
+      sessionId = cookieValue
+      qs('#login label input').checked = false;
+      toggleLogin();
       processLogin(res);
     } catch (err) {
       handleErr(err);
@@ -229,6 +262,7 @@
     reqAllitems();
     goHome();
     enableNavButtons();
+    updateUser();
   }
 
   /** ------------------------------ NavBar Functions  ------------------------------ */
@@ -295,6 +329,7 @@
   async function processAllHistory(res) {
     let info = res;
     let container = id('history');
+    container.innerHTML = "";
     let len = Object.keys(res).length;
     for (let i = 0; i < len; i++) {
       let section1 = gen('section')
@@ -310,24 +345,18 @@
       section1.appendChild(d1);
       section1.appendChild(d2);
       section1.appendChild(d3);
-      let hr = gen('hr');
-      section1.appendChild(hr);
-      let prodInfo;
-      try {
-        let res = await fetch("/shopping/product/" + info[i].id)
-        await statusCheck(res);
-        res = await res.json();
-        prodInfo = res;
-      } catch (err) {
-        handleErr(err);
-      }
-
-      console.log(prodInfo);
-      let art = genCurProductArticle(prodInfo[0], false);
-      section1.appendChild(art);
-      container.appendChild(section1);
+      container.prepend(section1);
     }
   }
+
+  function divp(string) {
+    let div2 = gen('div');
+    let p2 = gen('p');
+    p2.textContent = string;
+    div2.appendChild(p2);
+    return div2;
+  }
+
 
   /** ------------------------------ Filter Functions  ------------------------------ */
   function toggleHomeView() {
@@ -377,12 +406,10 @@
   * @param {JSON} responseData json representation of all yips in the database
   */
   function processAllItems(responseData) {
-    console.log(responseData);
     let container = id("home");
     let len = Object.keys(responseData).length;
     for (let i = 0; i < len; i++) {
       let curArticle = genCurProductArticle(responseData[i], true);
-      console.log(curArticle);
       container.appendChild(curArticle);
     }
   }
@@ -398,8 +425,6 @@
     let dInfo = gen("div");
     let dPrdctLbl = genProductLabel(curProduct);
     let dPrdctVal = genProductValue(curProduct);
-
-    console.log(curProduct);
 
     artcl.classList.add('product');
     artcl.id = curProduct.id + "-" + curProduct.type + "-" + curProduct.prodId;
@@ -512,9 +537,7 @@
   }
 
   async function reqSessionDetails() {
-    console.log(sessionId);
     let url = "/getuser/" + sessionId;
-    console.log(url);
     try {
       let res = await fetch(url);
       await statusCheck(res);
@@ -566,15 +589,22 @@
   /** ------------------------------ Confirm Submit Functions  ------------------------------ */
   function confirmTransaction() {
     id("single-response").textContent = "";
-
-    let countVal = id("count").value;
+    let count = id("count");
+    if (parseInt(count.max) < parseInt(count.value)) {
+      count.value = count.max;
+    }
+    let countVal = count.value;
     let name = qs("#single .product h2");
     let price = qs("#single .product .product-money");
     let smry = id("single-summary");
     smry.textContent = countVal + " " + name.textContent.toLowerCase();
     let sumPrice = id("single-sum-price");
     sumPrice.textContent = parseInt(price.textContent) * parseInt(countVal);
-    id("single-submit-btn").disabled = false;
+    if(!(countVal === "0")){
+      id("single-submit-btn").disabled = false;
+    } else {
+      id("single-response").textContent = "There is no more of this product left"
+    }
   }
 
   function submitTransaction() {
@@ -582,7 +612,6 @@
     let transactionType = id("single-submit-btn").classList[0];
     if (transactionType === "buy") {
       postBuy();
-      updateQuantities();
     } else if (transactionType === "sell") {
       postSell();
     }
@@ -598,10 +627,11 @@
   /** ------------------------------ Buy/Sell Functions  ------------------------------ */
   async function postBuy() {
     let singleId = qs("#single .product").id.split("-")[0];
-    let singleUser = qs("#single .product .product-seller").textContent;
+    let singleUser = await reqSessionDetails();
+    singleUser = singleUser.username;
     let singlePrice = qs("#single .product .product-money").textContent
     let singleQuantity = id("count").value;
-    console.log(singleUser);
+
     let params = new FormData();
     params.append('id', singleId)
     params.append('user', singleUser);
@@ -611,8 +641,16 @@
     let url = "/shopping/buy/"
     try {
       let res = await fetch(url, { method: 'POST', body: params });
+      console.log(res);
       await statusCheck(res);
-      postHistory();
+      res = await res.text();
+      if(res === "insufficient funds") {
+        id("single-response").textContent = "Not enough money to make this purchase"
+      } else {
+        updateUser();
+        updateQuantities();
+        postHistory();
+      }
     } catch (err) {
       handleErr(err);
     }
@@ -624,7 +662,11 @@
     let singleQuantity = id("count").value;
     let newQuantity = curQuantity - singleQuantity;
 
+    console.log(newQuantity);
     id('count').max = newQuantity;
+    if( newQuantity === 0) {
+      id('count').min = 0;
+    }
     qs("#single .product .product-amount").textContent = newQuantity;
     let allListings = qsa("#home .product");
     let neededListing;
@@ -633,7 +675,11 @@
         neededListing = allListings[i];
       }
     }
-    neededListing.querySelector(".product-amount").textContent = newQuantity;
+    if(newQuantity === 0) {
+      id("home").removeChild(neededListing);
+    } else {
+      neededListing.querySelector(".product-amount").textContent = newQuantity;
+    }
   }
 
   async function postHistory() {
@@ -681,6 +727,7 @@
       let res = await fetch(url, { method: 'POST', body: params });
       await statusCheck(res);
       res = await res.text();
+      updateUser();
       console.log(res);
       let listingJson = await reqSingleListing(res);
       id("home").appendChild(genCurProductArticle(listingJson, true));
