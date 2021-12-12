@@ -254,6 +254,7 @@ button:hover {
 
 #single > p {
   text-align: center;
+  margin: auto;
 }
 
 #single #single-description {

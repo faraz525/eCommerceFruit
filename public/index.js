@@ -659,8 +659,13 @@
       let res = await fetch(url);
       await statusCheck(res);
       res = await res.json();
+      let arr = [];
+      for(let i = 0; i < Object.keys(res).length; i++) {
+        arr.push(res[i].id);
+      }
+      hideProducts(arr, "id");
+      console.log(arr);
       id("search-btn").disabled = true;
-      console.log(res);
     } catch (err) {
       handleErr();
     }
@@ -721,14 +726,8 @@
   function handleErr() {
     let single = id('home');
     let error = id('error');
-    let search = id('search-btn');
-    let home = id('home-btn');
-    let yip = id('yip-btn');
-    single.classList.add('hidden');
-    error.classList.remove('hidden');
-    search.disabled = true;
-    home.disabled = true;
-    yip.disabled = true;
+    showView("error");
+    disableNavButtons();
   }
 
   /** ------------------------------ Helper Functions  ------------------------------ */
