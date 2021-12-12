@@ -223,20 +223,12 @@ button:hover {
   border-color: #3A5743;
 }
 
-#history hr {
-  width: 100%;
-}
-
-#history .transaction-container .product {
-  width: 250px;
-}
-
-#history > .transaction-container > div:not(.product),
-#history > .transaction-container > div:not(.product) > p {
+#history > .transaction-container >,
+#history > .transaction-container > div > p {
   margin: 0px;
 }
 
-#history > .transaction-container > div:not(.product) {
+#history > .transaction-container > div {
   display: flex;
   flex-direction: row;
   padding: 5px;
