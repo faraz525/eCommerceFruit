@@ -75,7 +75,7 @@ app.get('/shopping/product/:product', async function(req, res) {
   try {
     let db = await getDBConnection();
     let product = "'" + req.params.product + "'"; //the id of the listing item
-    let select = 'SELECT users.username, product.name, listing.price, listing.quantity ';
+    let select = 'SELECT users.username, product.name, listing.price, listing.quantity listing.id';
     let from = 'FROM users, product, listing '
     let where = 'WHERE listing.user = users.id AND product.id = listing.item AND listing.id = ' + product;
     let ex1 = await db.all(select + from + where);
@@ -97,13 +97,16 @@ app.get('/shopping/product/:product', async function(req, res) {
 //SELECT users.username, product.name, listing.price, listing.quantity
 //FROM users, product, listing
 //WHERE listing.user = users.id AND product.id = listing.item AND users.id = 3
-
+//the sessionid of the user is being sent
 app.get('/history/:user', async function(req, res) {
   try {
     let db = await getDBConnection();
-    let nameId = "'" + req.params.user + "'";
-    let sql = 'SELECT * FROM transactions WHERE nameid = ' + nameId;
-    let ex1 = await db.all(sql);
+    let nameId = req.params.user ;
+    let sql = 'SELECT id FROM users WHERE sessionId = ' + "'" + nameId + "'";
+    let id = await db.all(sql);
+    console.log(id);
+    let sql1 = 'SELECT * FROM transactions WHERE nameid = ' + id[0].id;
+    let ex1 = await db.all(sql1);
     if (ex1.length < 1) {
       res.type('text');
       res.status(400).send('History does not exist yet!');
@@ -289,10 +292,11 @@ app.post('/logout', function(req, res) {
   }
 });
 
-app.get('/cookies', function(req, res) {
+app.get('/cookies', async function(req, res) {
   res.type('text');
   let id = req.cookies['sessionid'];
   console.log(id);
+  console.log(aId);
   res.send(id);
 });
 
