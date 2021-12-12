@@ -22,8 +22,7 @@
   */
   function init() {
     reqAllitems();
-    let id = window.
-    console.log(id);
+
     let searchTerm = id("search-term");
     searchTerm.addEventListener("input", searchCheck);
 
@@ -79,7 +78,6 @@
     let sections = qsa('#overall .view-border');
     for (let i = 0; i < sections.length; i++) {
       if (sections[i].id === viewName) {
-        console.log(sections[i]);
         sections[i].classList.remove('hidden');
       } else {
         sections[i].classList.add('hidden');
@@ -151,6 +149,7 @@
     let len = Object.keys(responseData).length;
     for (let i = 0; i < len; i++) {
       let curArticle = genCurProductArticle(responseData[i]);
+      console.log(curArticle);
       container.appendChild(curArticle);
     }
   }
@@ -164,33 +163,22 @@
     console.log(curProduct);
     let artcl = gen("article");
     let igIcn = gen("img");
-    let dPrdctHvr = genProductHover(curProduct);
+    let dInfo = gen("div");
+    let dPrdctHvr = genProductHover();
     let dPrdctLbl = genProductLabel(curProduct);
     let dPrdctVal = genProductValue(curProduct);
 
     artcl.classList.add('product');
-    artcl.id = curYip.id;
+    artcl.id = curProduct.id;
     igIcn.src = "img/" + curProduct.name + ".jpg";
-    igIcn.alt = curProduct.name + "";
+    igIcn.alt = curProduct.name;
 
+    artcl.appendChild(dPrdctHvr);
     artcl.appendChild(igIcn);
-    artcl.appendChild(dYpCnt);
-    artcl.appendChild(dMeta);
+    dInfo.appendChild(dPrdctLbl);
+    dInfo.appendChild(dPrdctVal);
+    artcl.appendChild(dInfo);
     return artcl;
-  }
-
-  /**
-  * Converts a name as found in the database into the format of the image names
-  * @param {String} name the database formatted name to convert
-  * @returns {String} the name formated as an img name
-  */
-  function nameToImgName(name) {
-    let parsedName = name.split(" ");
-    let ret = parsedName[0].toLowerCase();
-    for (let i = 1; i < parsedName.length; i++) {
-      ret = ret + "-" + parsedName[i].toLowerCase();
-    }
-    return ret;
   }
 
   /**
@@ -198,19 +186,49 @@
   * @param {JSON} curYip Current yip to use
   * @returns {div} a div containing the name and yip of curYip
   */
-  function genYipContent(curYip) {
-    let dYpCnt = gen("div");
-    let pNme = gen("p");
-    let pYp = gen("p");
+   function genProductHover() {
+    let dHover = gen("div");
+    let pHoverText = gen("p");
 
-    pNme.textContent = curYip.name;
-    pNme.classList.add('individual');
-    pNme.addEventListener("click", goUser);
-    pYp.textContent = curYip.yip + " #" + curYip.hashtag;
+    dHover.classList.add('product-hover-div');
+    pHoverText.textContent = "Add to Cart";
+    pHoverText.classList.add('product-hover-text');
 
-    dYpCnt.appendChild(pNme);
-    dYpCnt.appendChild(pYp);
-    return dYpCnt;
+    dHover.appendChild(pHoverText);
+    return dHover;
+  }
+
+  /**
+  * Creates and returns a div which represents the content of curYip
+  * @param {JSON} curYip Current yip to use
+  * @returns {div} a div containing the name and yip of curYip
+  */
+  function genProductLabel(curProduct) {
+    let dLabel = gen("div");
+    let h2 = gen("h2");
+    let pSellerTag = gen("p");
+    let pSeller = gen("p");
+
+    dLabel.classList.add('product-labels');
+    h2.textContent = capFirstLetter(curProduct.name);
+    pSellerTag.textContent = "Seller:";
+    pSellerTag.classList.add('product-seller-tag');
+    pSeller.textContent = curProduct.username;
+    pSeller.classList.add('product-seller');
+
+    dLabel.appendChild(h2);
+    dLabel.appendChild(pSellerTag);
+    dLabel.appendChild(pSeller);
+    return dLabel;
+  }
+
+  /**
+  * Converts a name as found in the database into the format of the image names
+  * @param {String} name the database formatted name to convert
+  * @returns {String} the name formated as an img name
+  */
+   function capFirstLetter(name) {
+    return name.charAt(0).toUpperCase() + name.slice(1);
   }
 
   /**
@@ -218,25 +236,25 @@
   * @param {JSON} curYip Current yip to use
   * @returns {div} a div containing the like and date information of curYip
   */
-  function genYipMeta(curYip) {
-    let dMeta = gen("div");
-    let pDate = gen("p");
-    let dLke = gen("div");
-    let igLke = gen("img");
-    let pLke = gen("p");
+  function genProductValue(curProduct) {
+    let dValue = gen("div");
+    let pMoney = gen("p");
+    let pAmountTag = gen("p");
+    let pAmount = gen("p");
 
-    dMeta.classList.add('meta');
-    pDate.textContent = new Date(curYip.date).toLocaleString();
-    igLke.src = "img/heart.png";
-    igLke.alt = "heart";
-    igLke.addEventListener("click", reqLike);
-    pLke.textContent = curYip.likes;
+    dValue.classList.add('product-values');
+    pMoney.textContent = curProduct.price;
+    pMoney.classList.add('product-money');
+    pMoney.classList.add('currSign');
+    pAmountTag.textContent = "Avaliable:"
+    pAmountTag.classList.add('product-amount-tag');
+    pAmount.textContent = curProduct.quantity;
+    pAmount.classList.add('product-amount');
 
-    dLke.appendChild(igLke);
-    dLke.appendChild(pLke);
-    dMeta.appendChild(pDate);
-    dMeta.appendChild(dLke);
-    return dMeta;
+    dValue.appendChild(pMoney);
+    dValue.appendChild(pAmountTag);
+    dValue.appendChild(pAmount);
+    return dValue;
   }
 
   /**
@@ -416,12 +434,14 @@
   * @param {text} err The content of the error message
   */
   function errorHandler(err) {
+    /*
     id('yipper-data').classList.add('hidden');
     id('error').classList.remove('hidden');
     let navBtns = qsa("nav button");
     for (let i = 0; i < navBtns.length; i++) {
       navBtns[i].disabled = true;
     }
+    */
     console.error(err);
   }
 
