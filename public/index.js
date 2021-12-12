@@ -10,7 +10,7 @@
  */
 "use strict";
 
-(function() {
+(function () {
 
   let BASE_URL = "/shopping/";
 
@@ -22,12 +22,6 @@
   */
   function init() {
     reqAllitems();
-<<<<<<< HEAD
-
-=======
-    let ide = window.localStorage.getItem('sessionid');
-    console.log(ide);
->>>>>>> 0f51418761c15dff6136bdb0c200577771372a9b
     let searchTerm = id("search-term");
     searchTerm.addEventListener("input", searchCheck);
 
@@ -58,7 +52,7 @@
     params.append('password', password);
 
     try {
-      let res = await fetch(url, {method: 'POST', body: params});
+      let res = await fetch(url, { method: 'POST', body: params });
       await statusCheck(res);
       res = await res.json();
       processLogin(res);
@@ -69,7 +63,7 @@
 
   //NEED TO DO COOKIES HERE
   function processLogin(res) {
-    if(res.length > 0) {
+    if (res.length > 0) {
       console.log("Success");
       goHome();
 
@@ -99,6 +93,20 @@
   }
 
   /**
+  * Logic to determine if the search buttons should be enables or not
+  */
+  function updateSearch() {
+    let content = this.value.trim();
+    if (content.length > 0) {
+      searchEnable();
+    } else {
+      searchDisable();
+    }
+  }
+
+
+
+  /**
   * Shows the home view, ensuring that all yips are visible and that the search bar is cleared.
   */
   function goHome() {
@@ -122,8 +130,8 @@
   /**
   * Shows the cart view, ensuring that the search bar is cleared
   */
-   function goHistory() {
-     console.log("this is a plea for help");
+  function goHistory() {
+    console.log("this is a plea for help");
     clearSearch();
     showView("history");
     console.log("If God exists, then why do I not feel his mercy?")
@@ -191,7 +199,7 @@
   * @param {JSON} curYip Current yip to use
   * @returns {div} a div containing the name and yip of curYip
   */
-   function genProductHover() {
+  function genProductHover() {
     let dHover = gen("div");
     let pHoverText = gen("p");
 
@@ -232,7 +240,7 @@
   * @param {String} name the database formatted name to convert
   * @returns {String} the name formated as an img name
   */
-   function capFirstLetter(name) {
+  function capFirstLetter(name) {
     return name.charAt(0).toUpperCase() + name.slice(1);
   }
 
@@ -280,15 +288,15 @@
   * term
   */
   async function reqSearch() {
-    showView('home');
-    let url = BASE_URL + "yips?search=" + id("search-term").value.trim();
+    console.log(id("searchType").value);
+    //showView('home');
+    let url = BASE_URL + "shop?search=" + id("search-term").value.trim() + "&type=" + id("searchType").value;
     try {
       let res = await fetch(url);
       await statusCheck(res);
       res = await res.json();
       id("search-btn").disabled = true;
-      showYips();
-      hideYips(res.yips);
+      console.log(res);
     } catch (err) {
       errorHandler(err);
     }
@@ -385,7 +393,7 @@
     params.append("id", id);
 
     try {
-      let res = await fetch(url, {method: "POST", body: params});
+      let res = await fetch(url, { method: "POST", body: params });
       await statusCheck(res);
       res = await res.text();
       updateLikes(this.parentElement, res);
@@ -414,7 +422,7 @@
     qs("#new form #name").value = "";
     qs("#new form #yip").value = "";
     try {
-      let res = await fetch(url, {method: "POST", body: params});
+      let res = await fetch(url, { method: "POST", body: params });
       await statusCheck(res);
       res = await res.json();
       updateNewYip(res);

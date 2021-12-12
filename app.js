@@ -24,14 +24,28 @@ const COOKIE_EXPIRATION = 1000 * 60 * 60 * 3;
 //handle the situation where we need to be able to search for different types of info.
 
 //SELECT users.username, product.name, listing.price, listing.quantity FROM listing, users, product WHERE listing.user = users.id AND listing.item = product.id
+//have search filters by
 app.get('/shopping/shop', async function(req, res) {
   try{
     let db = await getDBConnection();
-    if (req.query['search']) {
-      let val = "'%" + req.query['search'] + "%'";
+    let search = req.query['search'];
+    let type = req.query['type'];
+    if (search) {
+      let val = "'%" + search + "%'";
+      let ex1;
       //we can have an array of items that match up the item on client side js and just grab em
-      let sql = 'SELECT id FROM listing WHERE item LIKE ' + val;
-      let ex1 = await db.all(sql);
+      if(type === 'item') {
+        let sql = 'SELECT listing.id FROM listing, product WHERE listing.item = product.id AND product.name LIKE ' + val;
+        ex1 = await db.all(sql);
+      }
+      else if(type === 'person') {
+        let sql = 'SELECT listing.id FROM listing, users  WHERE listing.user = users.id AND users.username LIKE ' + val;
+        ex1 = await db.all(sql);
+      }
+      else if(type == 'price') {
+        let sql = 'SELECT id FROM listing WHERE price < ' + parseInt(search);
+        ex1 = await db.all(sql);
+      }
       await db.close();
       res.json(ex1);
     } else {
