@@ -227,12 +227,24 @@
   function goLogin(){
     clearSearch();
     showView("login");
+    disableNavButtons();
+    let loginFields = qsa('#login input');
+    for(let i = 0; i < loginFields.length; i++) {
+      loginFields[i].value = "";
+    }
   }
 
   function enableNavButtons() {
     let navBtns = qsa("nav button");
     for (let i = 1; i < navBtns.length; i++) {
       navBtns[i].disabled = false;
+    }
+  }
+
+  function disableNavButtons() {
+    let navBtns = qsa("nav button");
+    for (let i = 0; i < navBtns.length; i++) {
+      navBtns[i].disabled = true;
     }
   }
 
@@ -459,6 +471,8 @@
   }
 
   function confirmTransaction(){
+    id("single-response").textContent = "";
+
     let countVal = id("count").value;
     let name = qs("#single .product h2");
     let price = qs("#single .product .product-money");
@@ -487,30 +501,6 @@
     id("single-sum-price").textContent = "";
   }
 
-  async function postBuy(){
-    let singleId = qs("#single .product").id.split("-")[0];
-    let singleUser = qs("#single .product .product-seller").textContent;
-    let singlePrice = qs("#single .product .product-money").textContent
-    let singleQuantity = id("count").value;
-
-    let params = new FormData();
-    params.append('id', singleId)
-    params.append('user', singleUser);
-    params.append('price', singlePrice);
-    params.append('quantity', singleQuantity);
-
-    let urlBuy = BASE_URL + "buy"
-    let urlHistory = "update/history"
-    try {
-      let res = await fetch(urlBuy, { method: 'POST', body: params });
-      await statusCheck(res);
-      res = await fetch(urlHistory, { method: 'POST', body: params });
-      await statusCheck(res);
-    } catch (err) {
-      errorHandler(err);
-    }
-  }
-
   function updateQuantities() {
     let singleId = qs("#single .product").id.split("-")[0];
     let curQuantity = parseInt(qs("#single .product-amount").textContent);
@@ -526,6 +516,83 @@
       }
     }
     neededListing.querySelector(".product-amount").textContent = newQuantity;
+  }
+
+  async function postBuy(){
+    let singleId = qs("#single .product").id.split("-")[0];
+    let singleUser = qs("#single .product .product-seller").textContent;
+    let singlePrice = qs("#single .product .product-money").textContent
+    let singleQuantity = id("count").value;
+
+    let params = new FormData();
+    params.append('id', singleId)
+    params.append('user', singleUser);
+    params.append('price', singlePrice);
+    params.append('quantity', singleQuantity);
+
+    let urlBuy = BASE_URL + "buy"
+    try {
+      let resBuy = await fetch(urlBuy, { method: 'POST', body: params });
+      await statusCheck(resBuy);
+      postHistory();
+    } catch (err) {
+      errorHandler(err);
+    }
+  }
+
+  async function postHistory(){
+    let userId = await reqSessionDetails();
+    userId = userId[0].username;
+    let singleItemId = qs("#single .product").id.split("-")[0];
+    let singleItemName = qs("#single .product h2")
+    let singlePrice = qs("#single .product .product-money").textContent
+    let singleQuantity = id("count").value;
+
+    let params = new FormData();
+    params.append('id', userId)
+    params.append('item', singleItemId);
+    params.append('itemName', singleItemName);
+    params.append('price', singlePrice);
+    params.append('quantity', singleQuantity);
+
+    let urlHistory = "update/history"
+    try {
+      let resHistory = await fetch(urlHistory, { method: 'POST', body: params });
+      await statusCheck(resHistory);
+      resHistory = await resHistory.text();
+      console.log(resHistory);
+      id("single-response").textContent = "Transaction ID: " + resHistory;
+    } catch (err) {
+      errorHandler(err);
+    }
+  }
+
+  async function postSell(){
+    let userId = await reqSessionDetails();
+    userId = userId[0]
+    console.log(userId);
+    let singleId = qs("#single .product").id.split("-")[0];
+    console.log(singleId);
+    let singlePrice = qs("#single .product .product-money").textContent
+    console.log(singlePrice);
+    let singleQuantity = id("count").value;
+    console.log(singleQuantity);
+
+    let params = new FormData();
+    params.append('name', userId)
+    params.append('iteitemm', singleId);
+    params.append('price', singlePrice);
+    params.append('quantity', singleQuantity);
+
+    let url = BASE_URL + "sell"
+    console.log(url);
+    try {
+      let res = await fetch(url, { method: 'POST', body: params });
+      await statusCheck(res);
+      postHistory();
+    } catch (err) {
+      errorHandler(err);
+    }
   }
 
   async function reqSessionDetails() {
@@ -620,66 +687,6 @@
         articles[i].classList.add('hidden');
       }
     }
-  }
-
-  /**
-  * Fetch POSTs information to the API to update the likes of the calling user
-  */
-  async function reqLike() {
-    let url = BASE_URL + "likes";
-    let id = this.parentElement.parentElement.parentElement.id;
-
-    let params = new FormData();
-    params.append("id", id);
-
-    try {
-      let res = await fetch(url, { method: "POST", body: params });
-      await statusCheck(res);
-      res = await res.text();
-      updateLikes(this.parentElement, res);
-    } catch (err) {
-      errorHandler(err);
-    }
-  }
-
-  /**
-  * Updates the like count of the yip visually on the webpage
-  * @param {div} parElem the div which contains the like information
-  * @param {*} num the new like value to use
-  */
-  function updateLikes(parElem, num) {
-    let pLike = parElem.querySelector("p");
-    pLike.textContent = num;
-  }
-
-  /**
-  * Fetch POSTs information to the API to update the database with a new yip
-  */
-  async function reqNewYip() {
-    let url = BASE_URL + "new";
-
-    let params = new FormData(qs("#new form"));
-    qs("#new form #name").value = "";
-    qs("#new form #yip").value = "";
-    try {
-      let res = await fetch(url, { method: "POST", body: params });
-      await statusCheck(res);
-      res = await res.json();
-      updateNewYip(res);
-    } catch (err) {
-      errorHandler(err);
-    }
-  }
-
-  /**
-  * Updates the home container to hold the new yip found in responseData, then brings the client to
-  * the home view after 2 seconds
-  * @param {JSON} responseData JSON representation of the yip
-  */
-  function updateNewYip(responseData) {
-    let container = id("home");
-    container.prepend(genCurYipArticle(responseData));
-    setTimeout(goHome, 2000);
   }
 
   /**
