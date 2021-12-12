@@ -11,9 +11,7 @@
 "use strict";
 
 (function () {
-
-  let BASE_URL = "/shopping/";
-  let SESSIONID;
+  let sessionId;
 
   window.addEventListener("load", init);
 
@@ -22,21 +20,32 @@
   * handling searches, and handling new yips.
   */
   function init() {
-    reqAllitems();
+    goLogin();
+    //Cookie shortcut
     if (document.cookie.split('; ').find(row => row.startsWith('sessionid='))) {
       const cookieValue = document.cookie
         .split('; ')
         .find(row => row.startsWith('sessionid='))
         .split('=')[1];
-      SESSIONID = cookieValue;
-      console.log(SESSIONID);
+      sessionId = cookieValue;
+      console.log(sessionId);
       if (cookieValue) {
-        goHome();
-        enableNavButtons();
+        startWebsite();
       }
     }
+
+    //Login event listeners
     let loginToggle = qs('#login label input');
     loginToggle.addEventListener("input", toggleLogin);
+
+    qs('#login form').addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      loginUser();
+    });
+
+    //Navbar event listeners
+    let searchSelector = id("search-type");
+    searchSelector.addEventListener("input", updateSearchProperties);
 
     let searchTerm = id("search-term");
     searchTerm.addEventListener("input", searchCheck);
@@ -50,17 +59,19 @@
     let historyBtn = id("history-btn");
     historyBtn.addEventListener("click", goHistory);
 
-    let viewRadioGrid = qsa('#visuals input[name=itemsView]')[0];
-    viewRadioGrid.addEventListener("input", toggleHomeView);
-    let viewRadioList = qsa('#visuals input[name=itemsView]')[1];
-    viewRadioList.addEventListener("input", toggleHomeView);
+    let signOutBtn = id('sign-out-btn');
+    signOutBtn.addEventListener("click", logOut);
+
+    //Filter event listeners
+    let viewRadio = qsa('#visuals input[name=itemsView]');
+    for(let i = 0; i < viewRadio.length; i++) {
+      viewRadio[i].addEventListener("input", toggleHomeView);
+    }
 
     let filterBtn = id("filter-btn");
     filterBtn.addEventListener("click", updateFilters);
 
-    let signOutBtn = id('sign-out-btn');
-    signOutBtn.addEventListener("click", logOut);
-
+    //Single event listeners
     let countInput = id("count");
     countInput.addEventListener("input", clearConfirmation);
 
@@ -69,80 +80,22 @@
 
     let submitTransactionBtn = id('single-submit-btn');
     submitTransactionBtn.addEventListener("click", submitTransaction);
-
-    console.log(qs('#login form'));
-    qs('#login form').addEventListener('submit', (ev) => {
-      ev.preventDefault();
-
-      loginUser();
-    });
   }
 
-  function toggleLogin() {
-    let label = qs('#login form label');
-    label.classList.toggle('hidden');
-    let email = qs('#login form #email');
-    email.required = !email.required;
-    email.classList.toggle('hidden');
-  }
-
-  function revealLoginPage() {
-    id('login').classList.remove('hidden');
-  }
-
-  async function loginUser() {
-
-    let url = '/login'
-    let user = id('name').value;
-    let password = id('password').value;
-    let params = new FormData();
-    params.append('user', user);
-    params.append('password', password);
-
-    try {
-      let res = await fetch(url, { method: 'POST', body: params });
-      await statusCheck(res);
-      res = await res.json();
-      const cookieValue = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('sessionid='))
-        .split('=')[1];
-      SESSIONID = cookieValue;
-      processLogin(res);
-    } catch (err) {
-      handleErr();
-    }
-  }
-
-  async function logOut() {
-    goLogin();
-
-    let url = '/logout';
-    try {
-      let res = await fetch(url, { method: 'POST' });
-      await statusCheck(res);
-      res = await res.text();
-      console.log(res);
-    } catch (err) {
-      handleErr();
-    }
-  }
-
-  //NEED TO DO COOKIES HERE
-  function processLogin(res) {
-    if (res.length > 0) {
-      console.log("Success");
-      goHome();
-      enableNavButtons();
-    }
-  }
-
+  /** ------------------------------ View Functions  ------------------------------ */
 
   /**
   * Shows a requested view, while hiding all other views
   * @param {String} viewName the name of the view to show
   */
-  function showView(viewName) {
+   function showView(viewName) {
+    if (viewName === "home") {
+      id("search-term").disabled = false;
+      id("search-type").disabled = false;
+    } else {
+      id("search-term").disabled = true;
+      id("search-type").disabled = true;
+    }
     let sections = qsa('#overall .view-border');
     for (let i = 0; i < sections.length; i++) {
       if (sections[i].id === viewName) {
@@ -159,29 +112,168 @@
   function goHome() {
     clearSearch();
     showProducts();
+    qs("h1").textContent = "Browse our amazing products!";
     showView('home');
     id("visuals").classList.remove("hidden");
-  }
-
-  function toggleHomeView() {
-    id('home').classList.toggle('gridLayout');
-    id('home').classList.toggle('listLayout');
   }
 
   /**
   * Shows the history view, ensuring that the search bar is cleared
   */
-  async function goHistory() {
+   async function goHistory() {
     clearSearch();
+    reqUserHistory();
+    qs("h1").textContent = "View your past purchases";
     showView("history");
-    let url = "history/" + SESSIONID;
+  }
+
+  function goBuy() {
+    qs("h1").textContent = "Buy this product!";
+    showSingle();
+    updateSingle(this.parentElement, "buy");
+  }
+
+  function goSell() {
+    qs("h1").textContent = "Sell this product!";
+    showSingle();
+    updateSingle(this.parentElement, "sell");
+  }
+
+  function showSingle() {
+    id("single").classList.remove("hidden");
+  }
+
+  function hideSingle() {
+    id("single").classList.add("hidden");
+  }
+
+  function goLogin() {
+    clearSearch();
+    qs("h1").textContent = "Please enter your information :)";
+    showView("login");
+    disableNavButtons();
+    let loginFields = qsa('#login input');
+    for (let i = 0; i < loginFields.length; i++) {
+      loginFields[i].value = "";
+    }
+  }
+
+  /** ------------------------------ Login Functions  ------------------------------ */
+  function toggleLogin() {
+    let label = qs('#login form label');
+    label.classList.toggle('hidden');
+    let email = qs('#login form #email');
+    email.required = !email.required;
+    email.classList.toggle('hidden');
+  }
+
+  async function loginUser() {
+    let user = id('name').value;
+    let password = id('password').value;
+    let params = new FormData();
+    params.append('user', user);
+    params.append('password', password);
+
+    let url = '/login';
+    try {
+      let res = await fetch(url, { method: 'POST', body: params });
+      await statusCheck(res);
+      res = await res.json();
+      const cookieValue = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('sessionid='))
+        .split('=')[1];
+      sessionId = cookieValue;
+      processLogin(res);
+    } catch (err) {
+      handleErr(err);
+    }
+  }
+
+  async function logOut() {
+    goLogin();
+
+    let url = '/logout';
+    try {
+      let res = await fetch(url, { method: 'POST' });
+      await statusCheck(res);
+      res = await res.text();
+    } catch (err) {
+      handleErr(err);
+    }
+  }
+
+  function processLogin(res) {
+    if (res.length > 0) {
+      console.log("Login Success");
+      startWebsite();
+    }
+  }
+
+  function startWebsite() {
+    reqAllitems();
+    goHome();
+    enableNavButtons();
+  }
+
+  /** ------------------------------ NavBar Functions  ------------------------------ */
+  function enableNavButtons() {
+    let navBtns = qsa("nav button");
+    for (let i = 1; i < navBtns.length; i++) {
+      navBtns[i].disabled = false;
+    }
+  }
+
+  function disableNavButtons() {
+    let navBtns = qsa("nav button");
+    for (let i = 0; i < navBtns.length; i++) {
+      navBtns[i].disabled = true;
+    }
+  }
+
+  function updateSearchProperties() {
+    clearSearch();
+    let selectedType = id("search-type").value;
+    let searchTerm = id("search-term");
+    if (selectedType === "price") {
+      searchTerm.type = "number";
+    } else {
+      searchTerm.type = "text";
+    }
+  }
+
+  /**
+  * Checks the contents of the search bar, and makes the search button appropiately enabled or
+  * disabled if the search bar contents are valid
+  */
+   function searchCheck() {
+    let but = id('search-btn');
+    if (this.value.trim().length > 0) {
+      but.disabled = false;
+    } else {
+      but.disabled = true;
+    }
+  }
+
+  /**
+  * Clears the text from the search input
+  */
+  function clearSearch() {
+    id("search-term").value = "";
+    id('search-btn').disabled = true;
+  }
+
+
+  /** ------------------------------ History Functions  ------------------------------ */
+  async function reqUserHistory() {
+    let url = "history/" + sessionId;
     try {
       let res = await fetch(url);
       await statusCheck(res);
       res = await res.json();
       processAllHistory(res);
     } catch (err) {
-      handleErr();
+      handleErr(err);
     }
   }
 
@@ -212,7 +304,7 @@
         res = await res.json();
         prodInfo = res;
       } catch (err) {
-        handleErr();
+        handleErr(err);
       }
 
       console.log(prodInfo);
@@ -220,84 +312,48 @@
       section1.appendChild(art);
       container.appendChild(section1);
     }
-
-    // let art = genCurProductArticle(info[0], false);
-    // section1.appendChild(art);
-    // container.appendChild(section1);
-
   }
 
-  function goBuy() {
-    showSingle();
-    updateSingle(this.parentElement, "buy");
+  /** ------------------------------ Filter Functions  ------------------------------ */
+  function toggleHomeView() {
+    id('home').classList.toggle('gridLayout');
+    id('home').classList.toggle('listLayout');
   }
 
-  function goSell() {
-    showSingle();
-    updateSingle(this.parentElement, "sell");
-  }
-
-  function showSingle() {
+  function updateFilters() {
+    let filters = [];
+    let filterBoxes = qsa("#visuals input[name=itemsFilter]");
+    for (let i = 0; i < filterBoxes.length; i++) {
+      if (filterBoxes[i].checked === false) {
+        filters.push(filterBoxes[i].value);
+      }
+    }
     clearSearch();
-    id("single").classList.remove("hidden");
+    hideSingle();
+    showProducts();
+    hideProducts(filters, "type");
   }
 
-  function goLogin() {
-    clearSearch();
-    showView("login");
-    disableNavButtons();
-    let loginFields = qsa('#login input');
-    for (let i = 0; i < loginFields.length; i++) {
-      loginFields[i].value = "";
+  function fillFilters() {
+    let filterBoxes = qsa("#visuals input[name=itemsFilter]");
+    for (let i = 0; i < filterBoxes.length; i++) {
+      filterBoxes[i].checked = true;
     }
   }
 
-  function enableNavButtons() {
-    let navBtns = qsa("nav button");
-    for (let i = 1; i < navBtns.length; i++) {
-      navBtns[i].disabled = false;
-    }
-  }
-
-  function disableNavButtons() {
-    let navBtns = qsa("nav button");
-    for (let i = 0; i < navBtns.length; i++) {
-      navBtns[i].disabled = true;
-    }
-  }
-
-  /**
-  * Clears the text from the search input
-  */
-  function clearSearch() {
-    id("search-term").value = "";
-    id('search-btn').disabled = true;
-  }
-
-  /**
-  * Logic to determine if the search buttons should be enables or not
-  */
-  function updateSearch() {
-    let content = this.value.trim();
-    if (content.length > 0) {
-      searchEnable();
-    } else {
-      searchDisable();
-    }
-  }
-
+  /** ------------------------------ Home Functions  ------------------------------ */
   /**
   * Fetches infromation from the API about all of the yips in the database
   */
   async function reqAllitems() {
-    let url = BASE_URL + "shop";
+    let url = "/shopping/shop";
     try {
       let res = await fetch(url);
       await statusCheck(res);
       res = await res.json();
-      processAllitems(res);
+      processAllItems(res);
     } catch (err) {
-      handleErr();
+      handleErr(err);
     }
   }
 
@@ -305,7 +361,7 @@
   * Adds all the yips in the database, as articles, into the home view container
   * @param {JSON} responseData json representation of all yips in the database
   */
-  function processAllitems(responseData) {
+  function processAllItems(responseData) {
     console.log(responseData);
     let container = id("home");
     let len = Object.keys(responseData).length;
@@ -336,9 +392,9 @@
     igIcn.alt = curProduct.name;
 
     if (includeHovers) {
-      let dPrdctHvrBuy = genProductHoverBuy();
+      let dPrdctHvrBuy = genProductHover("buy");
       dPrdctHvrBuy.addEventListener("click", goBuy);
-      let dPrdctHvrSell = genProductHoverSell();
+      let dPrdctHvrSell = genProductHover("sell");
       dPrdctHvrSell.addEventListener("click", goSell);
       artcl.appendChild(dPrdctHvrBuy);
       artcl.appendChild(dPrdctHvrSell);
@@ -350,38 +406,20 @@
     return artcl;
   }
 
-  /**
-  * Creates and returns a div which represents the content of curYip
-  * @param {JSON} curYip Current yip to use
-  * @returns {div} a div containing the name and yip of curYip
-  */
-  function genProductHoverBuy() {
-    let dHoverBuy = gen("div");
-    let pHoverTextBuy = gen("p");
+  function genProductHover(type) {
+    let dHover = gen("div");
+    let pHoverText = gen("p");
 
-    dHoverBuy.classList.add('product-hover-div-buy');
-    pHoverTextBuy.textContent = "Buy from this listing";
-    pHoverTextBuy.classList.add('product-hover-text');
+    dHover.classList.add('product-hover-div-' + type);
+    if (type === "buy") {
+      pHoverText.textContent = "Buy from this listing";
+    } else if (type === "sell") {
+      pHoverText.textContent = "Sell this kind of item";
+    }
+    pHoverText.classList.add('product-hover-text');
 
-    dHoverBuy.appendChild(pHoverTextBuy);
-    return dHoverBuy;
-  }
-
-  /**
-  * Creates and returns a div which represents the content of curYip
-  * @param {JSON} curYip Current yip to use
-  * @returns {div} a div containing the name and yip of curYip
-  */
-  function genProductHoverSell() {
-    let dHoverSell = gen("div");
-    let pHoverTextSell = gen("p");
-
-    dHoverSell.classList.add('product-hover-div-sell');
-    pHoverTextSell.textContent = "Sell this kind of item";
-    pHoverTextSell.classList.add('product-hover-text');
-
-    dHoverSell.appendChild(pHoverTextSell);
-    return dHoverSell;
+    dHover.appendChild(pHoverText);
+    return dHover;
   }
 
   /**
@@ -390,7 +428,6 @@
   * @returns {div} a div containing the name and yip of curYip
   */
   function genProductLabel(curProduct) {
-    //console.log(curProduct[0].name);
     let dLabel = gen("div");
     let h2 = gen("h2");
     let pSellerTag = gen("p");
@@ -415,7 +452,6 @@
   * @returns {String} the name formated as an img name
   */
   function capFirstLetter(name) {
-    //console.log(name);
     return name.charAt(0).toUpperCase() + name.slice(1);
   }
 
@@ -445,14 +481,44 @@
     return dValue;
   }
 
+  /** ------------------------------ GET for general info  ------------------------------ */
+  async function reqSingleListing(listingID) {
+    let url = "/shopping/product/" + listingID;
+    console.log(url);
+    try {
+      let res = await fetch(url);
+      await statusCheck(res);
+      res = await res.json();
+      console.log(res);
+      return res[0];
+    } catch (err) {
+      handleErr(err);
+    }
+  }
+
+  async function reqSessionDetails() {
+    console.log(sessionId);
+    let url = "/getuser/" + sessionId;
+    console.log(url);
+    try {
+      let res = await fetch(url);
+      await statusCheck(res);
+      res = await res.json();
+      return res[0];
+    } catch (err) {
+      handleErr(err);
+    }
+  }
+
+  /** ------------------------------ Single Functions  ------------------------------ */
   async function updateSingle(product, type) {
     let title = id("single-title");
     let countInput = id("count");
     countInput.value = 1;
-    let res = await reqSingleProduct(product.id.split("-")[0], type);
+
+    let res = await reqSingleListing(product.id.split("-")[0]);
     console.log(res);
-    await inputSingleProduct(res, type);
-    res = res[0];
+
     if (type === "buy") {
       title.textContent = "How many of this listing would you like to buy?"
       countInput.max = res.quantity;
@@ -460,6 +526,7 @@
       title.textContent = "You found 5 of this product lying around, sell some!";
       countInput.max = 5;
     }
+    await inputSingleListing(res, type);
     let des = id("single-description");
     des.textContent = res.description;
     let submitBtn = id('single-submit-btn');
@@ -467,20 +534,7 @@
     submitBtn.classList.add(type);
   }
 
-  async function reqSingleProduct(productID) {
-    let url = BASE_URL + "product/" + productID;
-    console.log(url);
-    try {
-      let res = await fetch(url);
-      await statusCheck(res);
-      res = await res.json();
-      return res;
-    } catch (err) {
-      handleErr();
-    }
-  }
-
-  async function inputSingleProduct(res, type) {
+  async function inputSingleListing(res, type) {
     let product = qs("#single .product");
     if (product) {
       id("single").removeChild(product);
@@ -488,12 +542,13 @@
     let divAfter = qsa("#single > p")[1]
     if (type === "sell") {
       let sessionInfo = await reqSessionDetails();
-      res[0].quantity = 5;
-      res[0].username = sessionInfo[0].username;
+      res.quantity = 5;
+      res.username = sessionInfo.username;
     }
-    id("single").insertBefore(genCurProductArticle(res[0], false), divAfter);
+    id("single").insertBefore(genCurProductArticle(res, false), divAfter);
   }
 
+  /** ------------------------------ Confirm Submit Functions  ------------------------------ */
   function confirmTransaction() {
     id("single-response").textContent = "";
 
@@ -524,23 +579,8 @@
     id("single-sum-price").textContent = "";
   }
 
-  function updateQuantities() {
-    let singleId = qs("#single .product").id.split("-")[0];
-    let curQuantity = parseInt(qs("#single .product-amount").textContent);
-    let singleQuantity = id("count").value;
-    let newQuantity = curQuantity - singleQuantity;
-    id('count').max = newQuantity;
-    qs("#single .product .product-amount").textContent = newQuantity;
-    let allListings = qsa("#home .product");
-    let neededListing;
-    for (let i = 0; i < allListings.length; i++) {
-      if (allListings[i].id.split("-")[0] === singleId) {
-        neededListing = allListings[i];
-      }
-    }
-    neededListing.querySelector(".product-amount").textContent = newQuantity;
-  }
 
+  /** ------------------------------ Buy/Sell Functions  ------------------------------ */
   async function postBuy() {
     let singleId = qs("#single .product").id.split("-")[0];
     let singleUser = qs("#single .product .product-seller").textContent;
@@ -553,19 +593,37 @@
     params.append('price', singlePrice);
     params.append('quantity', singleQuantity);
 
-    let urlBuy = BASE_URL + "buy"
+    let url = "/shopping/buy/"
     try {
-      let resBuy = await fetch(urlBuy, { method: 'POST', body: params });
-      await statusCheck(resBuy);
+      let res = await fetch(url, { method: 'POST', body: params });
+      await statusCheck(res);
       postHistory();
     } catch (err) {
-      handleErr();
+      handleErr(err);
     }
+  }
+
+  function updateQuantities() {
+    let singleId = qs("#single .product").id.split("-")[0];
+    let curQuantity = parseInt(qs("#single .product-amount").textContent);
+    let singleQuantity = id("count").value;
+    let newQuantity = curQuantity - singleQuantity;
+
+    id('count').max = newQuantity;
+    qs("#single .product .product-amount").textContent = newQuantity;
+    let allListings = qsa("#home .product");
+    let neededListing;
+    for (let i = 0; i < allListings.length; i++) {
+      if (allListings[i].id.split("-")[0] === singleId) {
+        neededListing = allListings[i];
+      }
+    }
+    neededListing.querySelector(".product-amount").textContent = newQuantity;
   }
 
   async function postHistory() {
     let userId = await reqSessionDetails();
-    userId = userId[0].id;
+    userId = userId.id;
     let singleItemId = qs("#single .product").id.split("-")[0];
     let singleItemName = qs("#single .product h2").textContent;
     let singlePrice = qs("#single .product .product-money").textContent;
@@ -578,28 +636,23 @@
     params.append('price', singlePrice);
     params.append('quantity', singleQuantity);
 
-    let urlHistory = "update/history"
+    let url = "update/history"
     try {
-      let resHistory = await fetch(urlHistory, { method: 'POST', body: params });
-      await statusCheck(resHistory);
-      resHistory = await resHistory.text();
-      console.log(resHistory);
-      id("single-response").textContent = "Transaction ID: " + resHistory;
+      let res = await fetch(url, { method: 'POST', body: params });
+      await statusCheck(res);
+      res = await res.text();
+      id("single-response").textContent = "Transaction ID: " + res;
     } catch (err) {
-      handleErr();
+      handleErr(err);
     }
   }
 
   async function postSell() {
     let userId = await reqSessionDetails();
-    userId = "" + userId[0].id;
-    console.log(userId);
+    userId = "" + userId.id;
     let singleId = qs("#single .product").id.split("-")[2];
-    console.log(singleId);
     let singlePrice = qs("#single .product .product-money").textContent
-    console.log(singlePrice);
     let singleQuantity = id("count").value;
-    console.log(singleQuantity);
 
     let params = new FormData();
     params.append('name', userId)
@@ -607,45 +660,17 @@
     params.append('price', singlePrice);
     params.append('quantity', singleQuantity);
 
-    let url = BASE_URL + "sell"
+    let url = "/shopping/sell/"
     console.log(url);
     try {
       let res = await fetch(url, { method: 'POST', body: params });
       await statusCheck(res);
       res = await res.text();
       console.log(res);
-      let listingJson = await reqSingleProduct(res);
-      console.log(listingJson[0]);
-      id("home").appendChild(genCurProductArticle(listingJson[0], true));
+      let listingJson = await reqSingleListing(res);
+      id("home").appendChild(genCurProductArticle(listingJson, true));
     } catch (err) {
-      handleErr();
-    }
-  }
-
-  async function reqSessionDetails() {
-    console.log(SESSIONID);
-    let url = "/getuser/" + SESSIONID;
-    console.log(url);
-    try {
-      let res = await fetch(url);
-      await statusCheck(res);
-      res = await res.json();
-      return res;
-    } catch (err) {
-      handleErr();
-    }
-  }
-
-  /**
-  * Checks the contents of the search bar, and makes the search button appropiately enabled or
-  * disabled if the search bar contents are valid
-  */
-  function searchCheck() {
-    let but = id('search-btn');
-    if (this.value.trim().length > 0) {
-      but.disabled = false;
-    } else {
-      but.disabled = true;
+      handleErr(err);
     }
   }
 
@@ -654,35 +679,28 @@
   * term
   */
   async function reqSearch() {
-    console.log(id("searchType").value);
-    let url = BASE_URL + "shop?search=" + id("search-term").value.trim() + "&type=" + id("searchType").value;
+    fillFilters();
+    hideSingle();
+
+    let url = "/shopping/shop?search=" + id("search-term").value.trim() + "&type=" + id("search-type").value;
     try {
       let res = await fetch(url);
       await statusCheck(res);
       res = await res.json();
-      let arr = [];
-      for(let i = 0; i < Object.keys(res).length; i++) {
-        arr.push(res[i].id);
-      }
-      hideProducts(arr, "id");
-      console.log(arr);
+      hideSearchResult(res);
       id("search-btn").disabled = true;
     } catch (err) {
-      handleErr();
+      handleErr(err);
     }
   }
 
-  function updateFilters() {
-    let filters = [];
-    let filterBoxes = qsa("#visuals input[name=itemsFilter]");
-    for (let i = 0; i < filterBoxes.length; i++) {
-      if (filterBoxes[i].checked === false) {
-        filters.push(filterBoxes[i].value);
+  function hideSearchResult(res){
+    let arr = [];
+      for(let i = 0; i < Object.keys(res).length; i++) {
+        arr.push("" + res[i].id);
       }
-    }
-    console.log(filters);
     showProducts();
-    hideProducts(filters, "type");
+    hideProducts(arr, "id");
   }
 
   /**
@@ -700,18 +718,19 @@
   * @param {JSON} responseData a list of yips ids
   */
   function hideProducts(match, filter) {
+    console.log(match);
     let articles = qsa("#home > article");
     for (let i = 0; i < articles.length; i++) {
       let hide = false;
       if (filter === 'type') {
         if (match.includes(articles[i].id.split("-")[1])) {
-          console.log();
           hide = true;
         }
       }
       if (filter === "id") {
         if (match.includes(articles[i].id.split("-")[0])) {
-          console.log();
+          hide = false;
+        } else {
           hide = true;
         }
       }
@@ -724,7 +743,8 @@
   /**
  * Helper function that serves to handle any error that occurs the platform.
  */
-  function handleErr() {
+  function handleErr(err) {
+    console.error(err);
     let single = id('home');
     let error = id('error');
     showView("error");
