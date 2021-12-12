@@ -3,10 +3,10 @@
  * Date: 11/30/2021
  * Section: CSE 154 AB
  *
- * yipper.js file for project 4 - yipper. This assignmnet sees that we create a social media
- * platform in a webpage which intereacts with our own API to get information for the "yips". This
- * file includes methods for toggling the view of the webpage, generating yip cards, and interacting
- * with the API.
+ * index.js file for our final project. This project sees that we create a ecommerce site
+ * which intereacts with our own API to get information for the products. This
+ * file includes methods for toggling the view of the webpage, generating product cards, and
+ * interacting with the API.
  */
 "use strict";
 
@@ -16,26 +16,22 @@
   window.addEventListener("load", init);
 
   /**
-  * Fills the webpage with yips, and adds event listeners for going to the home view, the new view,
-  * handling searches, and handling new yips.
+  * Fills the webpage with cards, and adds event listeners for going to the home view, the history
+  * view, the login view, handling searches, and handling buying/selling.
   */
   function init() {
+    // Begin our webpage off by going to the login screen
     goLogin();
+    // If there is already a session cookie, there is no need to login
     if (document.cookie.split('; ').find(row => row.startsWith('sessionid='))) {
-      const cookieValue = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('sessionid='))
-        .split('=')[1];
-      sessionId = cookieValue;
+      saveCookie();
       console.log(sessionId);
-      if (cookieValue) {
+      if (sessionId) {
         startWebsite();
       }
     }
 
-    updateUser();
-
-    //Login event listeners
+    /** ------------------------------ Login Event Listeners ------------------------------ */
     let loginToggle = qs('#login label input');
     loginToggle.addEventListener("input", toggleLogin);
 
@@ -44,7 +40,7 @@
       loginUser();
     });
 
-    //Navbar event listeners
+    /** ------------------------------ Navbar Event Listeners ------------------------------ */
     let searchSelector = id("search-type");
     searchSelector.addEventListener("input", updateSearchProperties);
 
@@ -63,7 +59,7 @@
     let signOutBtn = id('sign-out-btn');
     signOutBtn.addEventListener("click", logOut);
 
-    //Filter event listeners
+    /** ------------------------------ Filter Event Listeners ------------------------------ */
     let viewRadio = qsa('#visuals input[name=itemsView]');
     for(let i = 0; i < viewRadio.length; i++) {
       viewRadio[i].addEventListener("input", toggleHomeView);
@@ -72,7 +68,7 @@
     let filterBtn = id("filter-btn");
     filterBtn.addEventListener("click", updateFilters);
 
-    //Single event listeners
+    /** ------------------------------ Single Event Listeners ------------------------------ */
     let countInput = id("count");
     countInput.addEventListener("input", clearConfirmation);
 
@@ -108,7 +104,7 @@
   }
 
   /**
-  * Shows the home view, ensuring that all yips are visible and that the search bar is cleared.
+  * Shows the home view, ensuring that all products are visible and that the search bar is cleared.
   */
   function goHome() {
     clearSearch();
@@ -128,26 +124,44 @@
     showView("history");
   }
 
+  /**
+   * Shows the buy view
+   */
   function goBuy() {
     qs("h1").textContent = "Buy this product!";
     showSingle();
     updateSingle(this.parentElement, "buy");
   }
 
+  /**
+   * Shows the sell view
+   */
   function goSell() {
     qs("h1").textContent = "Sell this product!";
     showSingle();
     updateSingle(this.parentElement, "sell");
   }
 
+  /**
+   * Shows the single product which will either be used for a buy or sell view, ensuring that
+   * information from previous calls is cleared
+   */
   function showSingle() {
+    clearConfirmation();
     id("single").classList.remove("hidden");
   }
 
+  /**
+   * Hides the single product that is used for a buy or sell view
+   */
   function hideSingle() {
     id("single").classList.add("hidden");
   }
 
+  /**
+   * Shows the login view, ensuring that the navigation features are disabled and that information
+   * from previous calls is cleared
+   */
   function goLogin() {
     clearSearch();
     qs("h1").textContent = "Please enter your information :)";
@@ -162,20 +176,18 @@
   /** ------------------------------ Login Functions  ------------------------------ */
 
   /**
-  * Update user simply sets the money tab at the top to whatever cash that the user has
-  */
-  async function updateUser() {
-    let user = await reqSessionDetails();
-    let moneyTab = id('account-balance');
-    if(user) {
-      moneyTab.textContent = user.monies;
-    } else {
-      moneyTab.textContent = 0;
-    }
+   * Saves a cookie
+   */
+  function saveCookie() {
+    const cookieValue = document.cookie
+      .split('; ')
+      .find(row => row.startsWith('sessionid='))
+      .split('=')[1];
+    sessionId = cookieValue;
   }
 
   /**
-  * Helper function that is used to toggle the login fields and make the email field visible
+  * Switches between a menu for signing up and logging in
   */
   function toggleLogin() {
     let label = qs('#login form label');
@@ -188,13 +200,17 @@
     submitBtn.classList.toggle('signup')
   }
 
+  /**
+   * Sends the form information to the respective function if we want to login a new user or an
+   * existing user
+   */
   async function loginUser() {
     let user = id('name').value;
     let password = id('password').value;
     let params = new FormData();
     params.append('user', user);
     params.append('password', password);
-    if(qs("#login form button").classList.contains("login")) {
+    if (qs("#login form button").classList.contains("login")) {
       postLogin(params);
     } else if (qs("#login form button").classList.contains("signup")) {
       let email = id("email").value
@@ -204,8 +220,9 @@
   }
 
   /**
-  * Function that is used to send information up to the API for the login
-  * @param {JSON} params The params needed in order to send infromation to API
+  * fetch POSTS to the API to verify that provided login credentials exist in our db, and saves a
+  * cookie for this user
+  * @param {FormData} params the form that the login endpoint needs
   */
   async function postLogin(params) {
     let url = '/login';
@@ -213,17 +230,18 @@
       let res = await fetch(url, { method: 'POST', body: params });
       await statusCheck(res);
       res = await res.json();
-      const cookieValue = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('sessionid='))
-        .split('=')[1];
-      sessionId = cookieValue;
+      saveCookie();
       processLogin(res);
     } catch (err) {
       handleErr(err);
     }
   }
 
+  /**
+   * fetch POSTS to the API to add login credentials exist into our db, and saves a
+   * cookie for this user
+   * @param {FormData} params the form that the signup endpoint needs
+   */
   async function postSignup(params) {
     let url = '/signup';
     try {
@@ -232,11 +250,7 @@
       console.log(res);
       res = await res.text();
       console.log(res);
-      const cookieValue = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('sessionid='))
-        .split('=')[1];
-      sessionId = cookieValue
+      saveCookie();
       qs('#login label input').checked = false;
       toggleLogin();
       processLogin(res);
@@ -246,7 +260,7 @@
   }
 
   /**
-  * Helper function the log the user out of their account by ending the cookie
+  * Helper function that logs the user out of their account by ending the cookie
   */
   async function logOut() {
     goLogin();
@@ -263,12 +277,20 @@
     }
   }
 
+  /**
+   * Enables website functionality if login was succesful
+   * @param {text} res id of the user
+   */
   function processLogin(res) {
+    console.log(res);
     if (res.length > 0) {
       startWebsite();
     }
   }
 
+  /**
+   * Requests all listings, brings up the home view, and enables navigation
+   */
   function startWebsite() {
     reqAllitems();
     goHome();
@@ -277,6 +299,20 @@
   }
 
   /** ------------------------------ NavBar Functions  ------------------------------ */
+
+  /**
+  * Update user simply sets the money tab at the top to whatever cash that the user has
+  */
+   async function updateUser() {
+    let user = await reqSessionDetails();
+    let moneyTab = id('account-balance');
+    if(user) {
+      moneyTab.textContent = user.monies;
+    } else {
+      moneyTab.textContent = 0;
+    }
+  }
+
   function enableNavButtons() {
     let navBtns = qsa("nav button");
     for (let i = 1; i < navBtns.length; i++) {
