@@ -34,12 +34,9 @@
       }
     }
 
-<<<<<<< HEAD
-    //Login event listeners
-=======
     updateUser();
 
->>>>>>> 327e6c75ac3ac3879921fc103b04d915077317c9
+    //Login event listeners
     let loginToggle = qs('#login label input');
     loginToggle.addEventListener("input", toggleLogin);
 
@@ -111,7 +108,6 @@
     }
   }
 
-<<<<<<< HEAD
   /**
   * Shows the home view, ensuring that all yips are visible and that the search bar is cleared.
   */
@@ -165,7 +161,6 @@
   }
 
   /** ------------------------------ Login Functions  ------------------------------ */
-=======
   async function updateUser() {
     let user = await reqSessionDetails();
     console.log(user);
@@ -177,7 +172,6 @@
     }
   }
 
->>>>>>> 327e6c75ac3ac3879921fc103b04d915077317c9
   function toggleLogin() {
     let label = qs('#login form label');
     label.classList.toggle('hidden');
@@ -226,15 +220,8 @@
 
   function processLogin(res) {
     if (res.length > 0) {
-<<<<<<< HEAD
       console.log("Login Success");
       startWebsite();
-=======
-      console.log("Success");
-      goHome();
-      enableNavButtons();
-      updateUser();
->>>>>>> 327e6c75ac3ac3879921fc103b04d915077317c9
     }
   }
 
@@ -261,7 +248,6 @@
 
   function updateSearchProperties() {
     clearSearch();
-<<<<<<< HEAD
     let selectedType = id("search-type").value;
     let searchTerm = id("search-term");
     if (selectedType === "price") {
@@ -269,13 +255,6 @@
     } else {
       searchTerm.type = "text";
     }
-=======
-    showProducts();
-    showView('home');
-    let container = id('history');
-    container.innerHTML = "";
-    id("visuals").classList.remove("hidden");
->>>>>>> 327e6c75ac3ac3879921fc103b04d915077317c9
   }
 
   /**
@@ -332,7 +311,6 @@
       section1.appendChild(d2);
       section1.appendChild(d3);
       let hr = gen('hr');
-<<<<<<< HEAD
       section1.appendChild(hr);
       let prodInfo;
       try {
@@ -349,18 +327,6 @@
       section1.appendChild(art);
       container.appendChild(section1);
     }
-=======
-      container.appendChild(section1);
-    }
-  }
-
-  function divp(string) {
-    let div2 = gen('div');
-    let p2 = gen('p');
-    p2.textContent = string;
-    div2.appendChild(p2);
-    return div2;
->>>>>>> 327e6c75ac3ac3879921fc103b04d915077317c9
   }
 
   /** ------------------------------ Filter Functions  ------------------------------ */
@@ -792,13 +758,8 @@
   /**
  * Helper function that serves to handle any error that occurs the platform.
  */
-<<<<<<< HEAD
   function handleErr(err) {
     console.error(err);
-=======
-  function handleErr() {
-    console.log('entered');
->>>>>>> 327e6c75ac3ac3879921fc103b04d915077317c9
     let single = id('home');
     let error = id('error');
     showView("error");
