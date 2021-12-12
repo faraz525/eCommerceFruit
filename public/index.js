@@ -333,7 +333,12 @@
       res = await res.json();
       processAllHistory(res);
     } catch (err) {
-      handleErr(err);
+      console.log(err.toString());
+      if(err.toString() === "Error: History does not exist yet!") {
+        qs("h1").textContent = "No past purchases yet :(";
+      } else {
+        handleErr(err);
+      }
     }
   }
 
@@ -652,16 +657,16 @@
       let res = await fetch(url, { method: 'POST', body: params });
       console.log(res);
       await statusCheck(res);
-      res = await res.text();
-      if(res === "insufficient funds") {
+      updateUser();
+      updateQuantities();
+      postHistory();
+    } catch (err) {
+      console.log(err.toString());
+      if(err.toString() === "Error: insufficient funds") {
         id("single-response").textContent = "Not enough money to make this purchase"
       } else {
-        updateUser();
-        updateQuantities();
-        postHistory();
+        handleErr(err);
       }
-    } catch (err) {
-      handleErr(err);
     }
   }
 

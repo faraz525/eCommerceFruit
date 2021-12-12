@@ -154,7 +154,6 @@ button:hover {
 /* home styles */
 #home {
   display: flex;
-  justify-content: space-evenly;
   box-sizing: content-box;
   height: 420px;
   min-width: 200px;
@@ -166,12 +165,14 @@ button:hover {
 .gridLayout {
   width: 80vw;
   flex-wrap: wrap;
+  justify-content: space-evenly;
 }
 
 .listLayout {
   width: 30vw;
   flex-wrap: nowrap;
   flex-direction: column;
+  justify-content: flex-start;
 }
 
 /* cart view */
