@@ -34,7 +34,12 @@
       }
     }
 
+<<<<<<< HEAD
     //Login event listeners
+=======
+    updateUser();
+
+>>>>>>> 327e6c75ac3ac3879921fc103b04d915077317c9
     let loginToggle = qs('#login label input');
     loginToggle.addEventListener("input", toggleLogin);
 
@@ -106,6 +111,7 @@
     }
   }
 
+<<<<<<< HEAD
   /**
   * Shows the home view, ensuring that all yips are visible and that the search bar is cleared.
   */
@@ -159,6 +165,19 @@
   }
 
   /** ------------------------------ Login Functions  ------------------------------ */
+=======
+  async function updateUser() {
+    let user = await reqSessionDetails();
+    console.log(user);
+    let moneyTab = id('account-balance');
+    if(user[0]) {
+      moneyTab.textContent = user[0].monies;
+    } else {
+      moneyTab.textContent = 0;
+    }
+  }
+
+>>>>>>> 327e6c75ac3ac3879921fc103b04d915077317c9
   function toggleLogin() {
     let label = qs('#login form label');
     label.classList.toggle('hidden');
@@ -192,7 +211,9 @@
 
   async function logOut() {
     goLogin();
-
+    updateUser();
+    let container = id('history');
+    container.innerHTML = "";
     let url = '/logout';
     try {
       let res = await fetch(url, { method: 'POST' });
@@ -205,8 +226,15 @@
 
   function processLogin(res) {
     if (res.length > 0) {
+<<<<<<< HEAD
       console.log("Login Success");
       startWebsite();
+=======
+      console.log("Success");
+      goHome();
+      enableNavButtons();
+      updateUser();
+>>>>>>> 327e6c75ac3ac3879921fc103b04d915077317c9
     }
   }
 
@@ -233,6 +261,7 @@
 
   function updateSearchProperties() {
     clearSearch();
+<<<<<<< HEAD
     let selectedType = id("search-type").value;
     let searchTerm = id("search-term");
     if (selectedType === "price") {
@@ -240,6 +269,13 @@
     } else {
       searchTerm.type = "text";
     }
+=======
+    showProducts();
+    showView('home');
+    let container = id('history');
+    container.innerHTML = "";
+    id("visuals").classList.remove("hidden");
+>>>>>>> 327e6c75ac3ac3879921fc103b04d915077317c9
   }
 
   /**
@@ -279,7 +315,6 @@
 
   async function processAllHistory(res) {
     let info = res;
-    console.log(info);
     let container = id('history');
     let len = Object.keys(res).length;
     for (let i = 0; i < len; i++) {
@@ -287,15 +322,17 @@
       section1.classList.add('transaction-container');
       let div1 = gen('div');
       let p1 = gen('p')
-      p1.textContent = "Transaction ID: " + info[i].id;
+      p1.textContent = " Transaction ID: " + info[i].id + " ";
       div1.appendChild(p1);
-      let div2 = gen('div');
-      let p2 = gen('p')
-      p2.textContent = "Total amount: $" + info[i].price * info[i].quantity;
-      div2.appendChild(p2);
+      let d1 = divp("Total amount: $" + info[i].price * info[i].quantity);
+      let d2 = divp("Item bought: " + info[i].itemName);
+      let d3 = divp(" Total bought: " + info[i].quantity);
       section1.appendChild(div1);
-      section1.appendChild(div2);
+      section1.appendChild(d1);
+      section1.appendChild(d2);
+      section1.appendChild(d3);
       let hr = gen('hr');
+<<<<<<< HEAD
       section1.appendChild(hr);
       let prodInfo;
       try {
@@ -312,6 +349,18 @@
       section1.appendChild(art);
       container.appendChild(section1);
     }
+=======
+      container.appendChild(section1);
+    }
+  }
+
+  function divp(string) {
+    let div2 = gen('div');
+    let p2 = gen('p');
+    p2.textContent = string;
+    div2.appendChild(p2);
+    return div2;
+>>>>>>> 327e6c75ac3ac3879921fc103b04d915077317c9
   }
 
   /** ------------------------------ Filter Functions  ------------------------------ */
@@ -586,7 +635,7 @@
     let singleUser = qs("#single .product .product-seller").textContent;
     let singlePrice = qs("#single .product .product-money").textContent
     let singleQuantity = id("count").value;
-
+    console.log(singleUser);
     let params = new FormData();
     params.append('id', singleId)
     params.append('user', singleUser);
@@ -743,8 +792,13 @@
   /**
  * Helper function that serves to handle any error that occurs the platform.
  */
+<<<<<<< HEAD
   function handleErr(err) {
     console.error(err);
+=======
+  function handleErr() {
+    console.log('entered');
+>>>>>>> 327e6c75ac3ac3879921fc103b04d915077317c9
     let single = id('home');
     let error = id('error');
     showView("error");
