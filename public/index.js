@@ -22,8 +22,12 @@
   */
   function init() {
     reqAllitems();
+<<<<<<< HEAD
     console.log(document.cookie);
     if (document.cookie) {
+=======
+    if (document.cookie.split('; ').find(row => row.startsWith('sessionid='))) {
+>>>>>>> 7c6aa8d55a48dc8a5a0388d13581479706f1e4d0
       const cookieValue = document.cookie
         .split('; ')
         .find(row => row.startsWith('sessionid='))
