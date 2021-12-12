@@ -108,7 +108,7 @@
   */
   function goHome() {
     clearSearch();
-    showProducts();
+    showListings();
     qs("h1").textContent = "Browse our amazing products!";
     showView('home');
     id("visuals").classList.remove("hidden");
@@ -143,7 +143,7 @@
   }
 
   /**
-   * Shows the single product which will either be used for a buy or sell view, ensuring that
+   * Shows the single listing which will either be used for a buy or sell view, ensuring that
    * information from previous calls is cleared
    */
   function showSingle() {
@@ -152,7 +152,7 @@
   }
 
   /**
-   * Hides the single product that is used for a buy or sell view
+   * Hides the single listing that is used for a buy or sell view
    */
   function hideSingle() {
     id("single").classList.add("hidden");
@@ -301,7 +301,7 @@
   /** ------------------------------ NavBar Functions  ------------------------------ */
 
   /**
-  * Update user simply sets the money tab at the top to whatever cash that the user has
+  * Update user sets the money tab at the top to whatever cash that the user has
   */
    async function updateUser() {
     let user = await reqSessionDetails();
@@ -313,6 +313,9 @@
     }
   }
 
+  /**
+   * Enables all nav buttons, except search
+   */
   function enableNavButtons() {
     let navBtns = qsa("nav button");
     for (let i = 1; i < navBtns.length; i++) {
@@ -320,6 +323,9 @@
     }
   }
 
+  /**
+   * Disables all nav buttons
+   */
   function disableNavButtons() {
     let navBtns = qsa("nav button");
     for (let i = 0; i < navBtns.length; i++) {
@@ -327,6 +333,9 @@
     }
   }
 
+  /**
+   * Updates the type of our search input depending on the selected type of search
+   */
   function updateSearchProperties() {
     clearSearch();
     let selectedType = id("search-type").value;
@@ -361,6 +370,10 @@
 
 
   /** ------------------------------ History Functions  ------------------------------ */
+  /**
+   * fetch GETs the transactions associated with our current user, then adds them to the history
+   * container
+   */
   async function reqUserHistory() {
     let url = "history/" + sessionId;
     try {
@@ -378,6 +391,10 @@
     }
   }
 
+  /**
+   * Adds all given transactions into the history container
+   * @param {JSON} res the transactions to add
+   */
   async function processAllHistory(res) {
     let info = res;
     let container = id('history');
@@ -401,6 +418,11 @@
     }
   }
 
+  /**
+   * Generates a simple div with a p inside of it that contains the contents of string
+   * @param {string} string the text content of the p
+   * @returns {div} a div containing the p
+   */
   function divp(string) {
     let div2 = gen('div');
     let p2 = gen('p');
@@ -409,13 +431,18 @@
     return div2;
   }
 
-
   /** ------------------------------ Filter Functions  ------------------------------ */
+  /**
+   * Switches the home view between a grid and a list layout
+   */
   function toggleHomeView() {
     id('home').classList.toggle('gridLayout');
     id('home').classList.toggle('listLayout');
   }
 
+  /**
+   * Filters the home contents to only contain the type of items that are selected
+   */
   function updateFilters() {
     let filters = [];
     let filterBoxes = qsa("#visuals input[name=itemsFilter]");
@@ -426,10 +453,13 @@
     }
     clearSearch();
     hideSingle();
-    showProducts();
-    hideProducts(filters, "type");
+    showListings();
+    hideListings(filters, "type");
   }
 
+  /**
+   * Checks all filters
+   */
   function fillFilters() {
     let filterBoxes = qsa("#visuals input[name=itemsFilter]");
     for (let i = 0; i < filterBoxes.length; i++) {
@@ -439,7 +469,7 @@
 
   /** ------------------------------ Home Functions  ------------------------------ */
   /**
-  * Fetches infromation from the API about all of the yips in the database
+  * Fetches infromation from the API about all of the listings in the database
   */
   async function reqAllitems() {
     let url = "/shopping/shop";
@@ -454,39 +484,40 @@
   }
 
   /**
-  * Adds all the yips in the database, as articles, into the home view container
-  * @param {JSON} responseData json representation of all yips in the database
+  * Adds all the listings in the database, as articles, into the home view container
+  * @param {JSON} responseData json representation of all listings in the database
   */
   function processAllItems(responseData) {
     let container = id("home");
     let len = Object.keys(responseData).length;
     for (let i = 0; i < len; i++) {
-      let curArticle = genCurProductArticle(responseData[i], true);
+      let curArticle = genCurListingArticle(responseData[i], true);
       container.appendChild(curArticle);
     }
   }
 
   /**
-  * Creates and returns an article which represents the curYip
-  * @param {JSON} curYip Current yip to use
-  * @returns {article} an article containing all of the appropriate information of the yip
+  * Creates and returns an article which represents the curListing
+  * @param {JSON} curListing Current listing to use
+  * @param {boolean} includeHovers Whether or not this product should have on-hover divs
+  * @returns {article} an article containing all of the appropriate information of the listing
   */
-  function genCurProductArticle(curProduct, includeHovers) {
+  function genCurListingArticle(curListing, includeHovers) {
     let artcl = gen("article");
     let igIcn = gen("img");
     let dInfo = gen("div");
-    let dPrdctLbl = genProductLabel(curProduct);
-    let dPrdctVal = genProductValue(curProduct);
+    let dPrdctLbl = genListingLabel(curListing);
+    let dPrdctVal = genListingValue(curListing);
 
     artcl.classList.add('product');
-    artcl.id = curProduct.id + "-" + curProduct.type + "-" + curProduct.prodId;
-    igIcn.src = "img/" + curProduct.name + ".jpg";
-    igIcn.alt = curProduct.name;
+    artcl.id = curListing.id + "-" + curListing.type + "-" + curListing.prodId;
+    igIcn.src = "img/" + curListing.name + ".jpg";
+    igIcn.alt = curListing.name;
 
     if (includeHovers) {
-      let dPrdctHvrBuy = genProductHover("buy");
+      let dPrdctHvrBuy = genListingHover("buy");
       dPrdctHvrBuy.addEventListener("click", goBuy);
-      let dPrdctHvrSell = genProductHover("sell");
+      let dPrdctHvrSell = genListingHover("sell");
       dPrdctHvrSell.addEventListener("click", goSell);
       artcl.appendChild(dPrdctHvrBuy);
       artcl.appendChild(dPrdctHvrSell);
@@ -498,7 +529,12 @@
     return artcl;
   }
 
-  function genProductHover(type) {
+  /**
+   * Creates and returns a div with appropiate classes for hover behavior
+   * @param {string} type a buy or sell hover div
+   * @returns {div} a div with appropiate information
+   */
+  function genListingHover(type) {
     let dHover = gen("div");
     let pHoverText = gen("p");
 
@@ -515,21 +551,21 @@
   }
 
   /**
-  * Creates and returns a div which represents the content of curYip
-  * @param {JSON} curYip Current yip to use
-  * @returns {div} a div containing the name and yip of curYip
+  * Creates and returns a div which represents the labels of curListing
+  * @param {JSON} curListing Current listing to use
+  * @returns {div} a div containing the name and seller of curListing
   */
-  function genProductLabel(curProduct) {
+  function genListingLabel(curListing) {
     let dLabel = gen("div");
     let h2 = gen("h2");
     let pSellerTag = gen("p");
     let pSeller = gen("p");
 
     dLabel.classList.add('product-labels');
-    h2.textContent = capFirstLetter(curProduct.name);
+    h2.textContent = capFirstLetter(curListing.name);
     pSellerTag.textContent = "Seller:";
     pSellerTag.classList.add('product-seller-tag');
-    pSeller.textContent = curProduct.username;
+    pSeller.textContent = curListing.username;
     pSeller.classList.add('product-seller');
 
     dLabel.appendChild(h2);
@@ -539,32 +575,32 @@
   }
 
   /**
-  * Converts a name as found in the database into the format of the image names
-  * @param {String} name the database formatted name to convert
-  * @returns {String} the name formated as an img name
-  */
+   * Capitalizes the first character of a string
+   * @param {string} name the string to capitalize
+   * @returns {string} name, but the first character is capitalized
+   */
   function capFirstLetter(name) {
     return name.charAt(0).toUpperCase() + name.slice(1);
   }
 
   /**
-  * Creates and returns an div which represents the metadata of curYip
-  * @param {JSON} curYip Current yip to use
-  * @returns {div} a div containing the like and date information of curYip
+  * Creates and returns a div which represents the values of curListing
+  * @param {JSON} curListing Current listing to use
+  * @returns {div} a div containing the price and quantity information of curListing
   */
-  function genProductValue(curProduct) {
+  function genListingValue(curListing) {
     let dValue = gen("div");
     let pMoney = gen("p");
     let pAmountTag = gen("p");
     let pAmount = gen("p");
 
     dValue.classList.add('product-values');
-    pMoney.textContent = curProduct.price;
+    pMoney.textContent = curListing.price;
     pMoney.classList.add('product-money');
     pMoney.classList.add('currSign');
     pAmountTag.textContent = "Avaliable:"
     pAmountTag.classList.add('product-amount-tag');
-    pAmount.textContent = curProduct.quantity;
+    pAmount.textContent = curListing.quantity;
     pAmount.classList.add('product-amount');
 
     dValue.appendChild(pMoney);
@@ -574,6 +610,11 @@
   }
 
   /** ------------------------------ GET for general info  ------------------------------ */
+  /**
+   * fetch GETs the information for a specific listing given only its ID
+   * @param {number} listingID the number id of the listing
+   * @returns {JSON} information about the listing
+   */
   async function reqSingleListing(listingID) {
     let url = "/shopping/product/" + listingID;
     try {
@@ -586,6 +627,10 @@
     }
   }
 
+  /**
+   * fetch GETs the information for a specific user given only their session ID
+   * @returns {JSON} the username and userId of the user who is currently in session
+   */
   async function reqSessionDetails() {
     let url = "/getuser/" + sessionId;
     try {
@@ -599,6 +644,11 @@
   }
 
   /** ------------------------------ Single Functions  ------------------------------ */
+  /**
+   * Updates the single listing view with the information of a new listing
+   * @param {Element} product the .product container of the calling listing
+   * @param {string} type a buy or sell listing view
+   */
   async function updateSingle(product, type) {
     let title = id("single-title");
     let countInput = id("count");
@@ -622,6 +672,11 @@
     submitBtn.classList.add(type);
   }
 
+  /**
+   * Generates and inserts a listing into the single view
+   * @param {JSON} res information about the listing
+   * @param {string} type a buy or sell listing view
+   */
   async function inputSingleListing(res, type) {
     let product = qs("#single .product");
     if (product) {
@@ -633,10 +688,15 @@
       res.quantity = 5;
       res.username = sessionInfo.username;
     }
-    id("single").insertBefore(genCurProductArticle(res, false), divAfter);
+    id("single").insertBefore(genCurListingArticle(res, false), divAfter);
   }
 
   /** ------------------------------ Confirm Submit Functions  ------------------------------ */
+  /**
+   * Locks in the selected count for a transaction and enables the user to then submit this
+   * transaction. Ensures that the user only selects a count as large as the listing's quantity,
+   * and that the user cannot submit a count of 0.
+   */
   function confirmTransaction() {
     id("single-response").textContent = "";
     let count = id("count");
@@ -657,6 +717,9 @@
     }
   }
 
+  /**
+   * Submits the selected count into either a buy or sell fetch POST
+   */
   function submitTransaction() {
     clearConfirmation();
     let transactionType = id("single-submit-btn").classList[0];
@@ -667,6 +730,9 @@
     }
   }
 
+  /**
+   * Clears all information regarding a confirmation
+   */
   function clearConfirmation() {
     id("single-submit-btn").disabled = true;
     id("single-summary").textContent = "";
@@ -675,6 +741,11 @@
 
 
   /** ------------------------------ Buy/Sell Functions  ------------------------------ */
+  /**
+   * fetch POSTs a buy request which uses the count locked into the single listing view, then
+   * updates the amount of money the user has, the quantity of the listing left remaining, and fetch
+   * POSTs a new stored transaction
+   */
   async function postBuy() {
     let singleId = qs("#single .product").id.split("-")[0];
     let singleUser = await reqSessionDetails();
@@ -706,6 +777,11 @@
     }
   }
 
+  /**
+   * Updates the quantity of the listing found in single view to match the new listing count after
+   * some of its quantity has been bought, and removes the listing from the home view if the
+   * quantity drops to 0
+   */
   function updateQuantities() {
     let singleId = qs("#single .product").id.split("-")[0];
     let curQuantity = parseInt(qs("#single .product-amount").textContent);
@@ -732,6 +808,10 @@
     }
   }
 
+  /**
+   * fetch POSTs a new transaction to be stored in our DB and displays the transaction id created
+   * for this transaction
+   */
   async function postHistory() {
     let userId = await reqSessionDetails();
     userId = userId.id;
@@ -739,6 +819,7 @@
     let singleItemName = qs("#single .product h2").textContent;
     let singlePrice = qs("#single .product .product-money").textContent;
     let singleQuantity = id("count").value;
+
     let params = new FormData();
     params.append('id', userId)
     params.append('item', singleItemId);
@@ -756,6 +837,10 @@
     }
   }
 
+  /**
+   * fetch POSTs a new listing which uses the information in the single listing view, then updates
+   * the funds of the user
+   */
   async function postSell() {
     let userId = await reqSessionDetails();
     userId = "" + userId.id;
@@ -774,15 +859,15 @@
       res = await res.text();
       updateUser();
       let listingJson = await reqSingleListing(res);
-      id("home").appendChild(genCurProductArticle(listingJson, true));
+      id("home").appendChild(genCurListingArticle(listingJson, true));
     } catch (err) {
       handleErr(err);
     }
   }
 
   /**
-  * Fetches information from the API to get the ids of any yips that contain the text in the search
-  * term
+  * Fetches information from the API to get the ids of any listings that contain the value in the
+  * search term of the type in the given selector, then hides all listings that aren't these ids
   */
   async function reqSearch() {
     fillFilters();
@@ -801,21 +886,22 @@
   }
 
   /**
-  * hides the search results
-  */
+   * Hides all listings that don't come up from a search result
+   * @param {JSON} res the listings that did come up from a search result
+   */
   function hideSearchResult(res){
     let arr = [];
       for(let i = 0; i < Object.keys(res).length; i++) {
         arr.push("" + res[i].id);
       }
-    showProducts();
-    hideProducts(arr, "id");
+    showListings();
+    hideListings(arr, "id");
   }
 
   /**
-  * Makes all items visible
-  */
-  function showProducts() {
+   * Make all listings visible
+   */
+  function showListings() {
     let articles = qsa("#home article");
     for (let i = articles.length - 1; i >= 0; i--) {
       articles[i].classList.remove('hidden');
@@ -823,10 +909,11 @@
   }
 
   /**
-  * Hides any yips which are not found in responseData
-  * @param {JSON} responseData a list of yips ids
+  * Hides any listings as outline by match
+  * @param {Array} match a list of yips ids
+  * @param {string} filter a type or id search
   */
-  function hideProducts(match, filter) {
+  function hideListings(match, filter) {
     console.log(match);
     let articles = qsa("#home > article");
     for (let i = 0; i < articles.length; i++) {
