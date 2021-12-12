@@ -12,6 +12,7 @@ const sqlite3 = require('sqlite3');
 const sqlite = require('sqlite');
 const multer = require("multer");
 const cookieParser = require("cookie-parser");
+const { restart } = require('nodemon');
 app.use(cookieParser());
 
 app.use(express.urlencoded({extended: true}));
@@ -263,16 +264,24 @@ app.post('/shopping/buy', async function(req, res) {
       return;
     }
     let dbQuantity = await db.all('SELECT quantity FROM listing WHERE id = ' + id);
+    let userMonies = await db.all('SELECT monies FROM users WHERE username = ' + "'" +user + "'");
     dbQuantity = dbQuantity[0];
+    userMonies = userMonies[0];
+    console.log(total + "------" + userMonies.monies)
     if(quantity > dbQuantity.quantity) {
       res.type('text');
       res.status(400).send('Too many items requested');
       return;
     }
-    else if(quantity === dbQuantity.quantity) {
+    else if(parseInt(quantity) === parseInt(dbQuantity.quantity)) {
       let sql = 'DELETE FROM listing WHERE id = ' + id;
       let reso = db.run(sql);
     } else {
+      if(parseInt(total) > parseInt(userMonies.monies)) {
+        res.type('text');
+        res.status(200).send("insufficient funds");
+        return;
+      }
       let sql1 = 'UPDATE listing SET quantity = quantity - ? WHERE id = ?;'
       let ex1 = await db.run(sql1, [quantity, id]);
     }
