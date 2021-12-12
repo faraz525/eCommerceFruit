@@ -393,7 +393,8 @@ button:hover {
   justify-content: right;
 }
 
-.product .product-labels p, .product .product-values .product-amount-tag,
+.product .product-labels p,
+.product .product-values .product-amount-tag,
 .product .product-values .product-amount {
   height: fit-content;
   margin: 0;
