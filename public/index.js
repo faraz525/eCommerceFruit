@@ -324,10 +324,14 @@
     }
   }
 
+  function updateFilters() {
+    let
+  }
+
   /**
   * Makes all yips visible
   */
-  function showYips() {
+  function showProducts() {
     let articles = qsa("#home article");
     for (let i = articles.length - 1; i >= 0; i--) {
       articles[i].classList.remove('hidden');
@@ -338,7 +342,7 @@
   * Hides any yips which are not found in responseData
   * @param {JSON} responseData a list of yips ids
   */
-  function hideYips(responseData) {
+  function hideProducts(responseData) {
     let articles = qsa("#home article");
     let resIndex = 0;
     for (let i = articles.length - 1; i >= 0; i--) {
