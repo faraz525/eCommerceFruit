@@ -214,6 +214,7 @@
       } catch (err) {
         handleErr();
       }
+
       console.log(prodInfo);
       let art = genCurProductArticle(prodInfo[0], false);
       section1.appendChild(art);
