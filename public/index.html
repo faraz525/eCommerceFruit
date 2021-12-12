@@ -21,9 +21,9 @@
         </select>
         <input id='search-term' type='text'>
         <button id='search-btn' disabled>Search</button>
-        <button id='home-btn'>Home</button>
-        <button id='history-btn'>History</button>
-        <button id="sign-out-btn">Sign-out</button>
+        <button id='home-btn' disabled>Home</button>
+        <button id='history-btn'disabled>History</button>
+        <button id="sign-out-btn" disabled>Sign-out</button>
       </nav>
     </header>
     <main>
@@ -109,12 +109,11 @@
           <section id="single" class="view-border hidden">
             <p id = "single-title">How many of this product would you like to buy?</p>
             <p id="single-description">Fine sourced plant that gets you very strong!</p>
-            <form>
+            <div>
               <label for='count'>count: </label>
               <input type='number' min="1" id='count' name='count' value="1" required>
-              <button id="single-buy-btn">Confirm</button>
-              <button id="single-sell-btn">Sell</button>
-            </form>
+              <button id="single-confirm-btn">Confirm</button>
+            </div>
             <div>
               <p>Transaction Details:</p>
               <p id="single-summary">52 barley</p>
@@ -123,7 +122,7 @@
               <p>Sum value:</p>
               <p id="single-sum-price" class="currSign">21</p>
             </div>
-            <button id="single-submit">Submit</button>
+            <button id="single-submit-btn">Submit</button>
         </section>
       </article>
     </main>
