@@ -133,7 +133,7 @@
   */
   function goHome() {
     clearSearch();
-    showYips();
+    showProducts();
     showView('home');
     id("visuals").classList.remove("hidden");
     id("single").classList.remove("hidden");
@@ -339,7 +339,7 @@
   }
 
   function updateFilters() {
-    let
+    let i = 0;
   }
 
   /**
