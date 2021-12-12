@@ -279,7 +279,7 @@ app.post('/shopping/buy', async function(req, res) {
     } else {
       if(parseInt(total) > parseInt(userMonies.monies)) {
         res.type('text');
-        res.status(200).send("insufficient funds");
+        res.status(400).send("insufficient funds");
         return;
       }
       let sql1 = 'UPDATE listing SET quantity = quantity - ? WHERE id = ?;'
