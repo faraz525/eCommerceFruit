@@ -115,6 +115,8 @@
   }
 
   async function logOut() {
+    goLogin();
+
     let url = '/logout';
     try {
       let res = await fetch(url, { method: 'POST' });
@@ -237,6 +239,11 @@
   function showSingle() {
     clearSearch();
     id("single").classList.remove("hidden");
+  }
+
+  function goLogin(){
+    clearSearch();
+    showView("login");
   }
 
   function enableNavButtons() {
