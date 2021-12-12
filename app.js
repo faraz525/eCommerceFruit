@@ -214,7 +214,6 @@ app.post('/signup', async function(req, res) {
     res.type('text');
     res.send("success");
   } catch (err) {
-    console.log(err);
     res.type('text');
     res.status(400).send('Missing one or more of the required params.');
   }
