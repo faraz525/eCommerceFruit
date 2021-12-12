@@ -58,6 +58,9 @@
     let filterBtn = id("filter-btn");
     filterBtn.addEventListener("click", updateFilters);
 
+    let signOutBtn = id('sign-out-btn');
+    signOutBtn.addEventListener("click", logOut);
+
     console.log(qs('#login form'));
     qs('#login form').addEventListener('submit', (ev) => {
       ev.preventDefault();
@@ -72,6 +75,10 @@
     let email = qs('#login form #email');
     email.required = !email.required;
     email.classList.toggle('hidden');
+  }
+
+  function revealLoginPage() {
+    id('login').classList.remove('hidden');
   }
 
   async function loginUser() {
@@ -93,6 +100,19 @@
     }
   }
 
+  async function logOut() {
+    let url = '/logout';
+    try {
+      let res = await fetch(url, {method: 'POST'});
+      await statusCheck(res);
+      res = await res.text();
+      console.log(res);
+    } catch (err) {
+      errorHandler(err);
+    }
+  }
+
+  //NEED TO DO COOKIES HERE
   function processLogin(res) {
     if (res.length > 0) {
       console.log("Success");

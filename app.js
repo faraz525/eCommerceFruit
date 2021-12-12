@@ -286,11 +286,15 @@ app.post('/shopping/buy', async function(req, res) {
 app.post('/logout', function(req, res) {
   res.type('text');
   let id = req.cookies['sessionid'];
-  if (id) {
-    res.clearCookie('sessionid');
-    res.send('Successfully logged out!');
-  } else {
-    res.send('Already logged out.');
+  try {
+    if (id) {
+      res.clearCookie('sessionid');
+      res.send('Successfully logged out!');
+    } else {
+      res.send('Already logged out.');
+    }
+  } catch (err) {
+    res.status(500).send('issue with the server');
   }
 });
 
