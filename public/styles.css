@@ -158,39 +158,17 @@ button:hover {
   padding: 20px;
 }
 
-.gridLayout {
+.grid-layout {
   width: 80vw;
   flex-wrap: wrap;
   justify-content: space-evenly;
 }
 
-.listLayout {
+.list-layout {
   width: 30vw;
   flex-wrap: nowrap;
   flex-direction: column;
   justify-content: flex-start;
-}
-
-/* cart view */
-#cart {
-  width: 80vw;
-}
-
-#cart-bag {
-  display: flex;
-  box-sizing: content-box;
-  flex-wrap: nowrap;
-  overflow-x: scroll;
-}
-
-#cart > p:nth-of-type(1) {
-  font-size: 20px;
-  margin-bottom: 0px;
-}
-
-#cart #cart-sum-price {
-  font-size: 25px;
-  margin: 0px auto;
 }
 
 /* history view */

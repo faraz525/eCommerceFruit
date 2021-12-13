@@ -35,7 +35,7 @@
           <label><input type="checkbox" name="newAccount" value="newAcc">
             Register New Account? </label>
           <form>
-            <label for='email' class = "hidden">Email</label>
+            <label for='email' class="hidden">Email</label>
             <input type='email' id='email' name='email' class="hidden">
             <label for='name'>Username</label>
             <input type='text' id='name' name='name' required>
@@ -63,17 +63,7 @@
           </section>
 
           <!-- view where products will get loaded into  -->
-          <section id="home" class="view-border gridLayout hidden">
-          </section>
-
-          <!-- view of all items the user intends to purchase-->
-          <section id="cart" class="view-border hidden">
-            <div id="cart-bag">
-            </div>
-            <p>Your total purchase will cost:</p>
-            <p id="cart-sum-price" class="curr-sign"></p>
-            <button id="buy-cart-btn">Confirm Purchase</button>
-            <p id="purchase-response"></p>
+          <section id="home" class="view-border grid-layout hidden">
           </section>
 
           <!-- view of all transactions made on the account-->
@@ -82,8 +72,8 @@
 
           <!-- view of a singular product-->
           <section id="single" class="view-border hidden">
-            <p id = "single-title">How many of this product would you like to buy?</p>
-            <p id="single-description">Fine sourced plant that gets you very strong!</p>
+            <p id="single-title"></p>
+            <p id="single-description"></p>
             <div>
               <label for='count'>count: </label>
               <input type='number' min="0" id='count' name='count' value="1" required>
@@ -103,7 +93,8 @@
         </article>
         <!-- error view -->
         <h2 id='error' class='view-border'>
-          Our site is experincing some difficulties, please refresh!</h2>
+          Our site is experincing some difficulties, please refresh!
+        </h2>
       </article>
     </main>
     <footer>

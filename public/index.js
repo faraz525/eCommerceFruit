@@ -421,8 +421,8 @@
    * Switches the home view between a grid and a list layout
    */
   function toggleHomeView() {
-    id('home').classList.toggle('gridLayout');
-    id('home').classList.toggle('listLayout');
+    id('home').classList.toggle('grid-layout');
+    id('home').classList.toggle('list-layout');
   }
 
   /**
