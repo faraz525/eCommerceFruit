@@ -87,8 +87,10 @@
     for (let i = 0; i < sections.length; i++) {
       if (sections[i].id === viewName) {
         sections[i].classList.remove('hidden');
+        sections[i].classList.add('flex');
       } else {
         sections[i].classList.add('hidden');
+        sections[i].classList.remove('flex');
       }
     }
   }

@@ -107,9 +107,12 @@ button:hover {
   content: '$';
 }
 
+.flex {
+  display: flex;
+}
+
 /* login styles */
 #login {
-  display: flex;
   flex-direction: column;
   width: 45vw;
   margin: auto;
@@ -161,7 +164,6 @@ button:hover {
 
 /* home styles */
 #home {
-  display: flex;
   box-sizing: content-box;
   height: 420px;
   min-width: 200px;
@@ -187,7 +189,6 @@ button:hover {
 #history {
   width: 40vw;
   margin: auto;
-  display: flex;
   flex-direction: column;
   box-sizing: content-box;
   height: 420px;
@@ -400,5 +401,5 @@ button:hover {
 }
 
 .hidden {
-  display: none !important;
+  display: none;
 }
