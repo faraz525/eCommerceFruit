@@ -20,53 +20,44 @@ app.use(express.json());
 app.use(multer().none());
 const COOKIE_EXPIRATION = 1000 * 60 * 60 * 3;
 
-// Primary endpoint that allows the front end to request data about all the items on the website.
+//Primary endpoint that allows the front end to request data about all the items on the website.
 app.get('/shopping/shop', async function(req, res) {
-  try {
+  try{
     let db = await getDBConnection();
     let search = req.query['search'];
     let type = req.query['type'];
     if (search) {
-      let ex1 = shopHelper(db, search, type);
+      let val = "'%" + search + "%'";
+      let ex1;
+      if(type === 'item') {
+        let sql = 'SELECT listing.id FROM listing, product WHERE listing.item = product.id AND product.name LIKE ' + val;
+        ex1 = await db.all(sql);
+      }
+      else if(type === 'person') {
+        let sql = 'SELECT listing.id FROM listing, users  WHERE listing.user = users.id AND users.username LIKE ' + val;
+        ex1 = await db.all(sql);
+      }
+      else if(type == 'price') {
+        let sql = 'SELECT id FROM listing WHERE price < ' + parseInt(search);
+        ex1 = await db.all(sql);
+      }
       await db.close();
       res.json(ex1);
     } else {
-      let sql1 = 'SELECT users.username, product.name, listing.price, listing.quantity, ';
-      let sql15 = 'listing.id, product.type, product.id AS prodId ';
+      let sql1 = 'SELECT users.username, product.name, listing.price, listing.quantity, listing.id, product.type, product.id AS prodId ';
       let sql2 = 'FROM listing, users, product ';
       let sql3 = 'WHERE listing.user = users.id AND listing.item = product.id';
-      let ex1 = await db.all(sql1 + sql15 + sql2 + sql3);
+      let ex1 = await db.all(sql1 + sql2 + sql3);
       db.close();
       res.json(ex1);
     }
   } catch (err) {
+    console.log(err);
     res.type('text');
     res.status(500).send('An error occurred on the server. Try again later.');
   }
 });
 
-/**
- * Generates an unused sessionid and returns it to the user.
- * @param {Object} db - The database for the backend
- * @param {Promise} search - the response object
- * @param {object} type - the id of the object
- * @param {Object} user - the id of the user
- */
-async function shopHelper(db, search, type) {
-  let val = "'%" + search + "%'";
-  let ex1;
-  if (type === 'item') {
-    let sql = 'SELECT listing.id FROM listing, product WHERE listing.item = ';
-    ex1 = await db.all(sql + 'product.id AND product.name LIKE ' + val);
-  } else if (type === 'person') {
-    let sql = 'SELECT listing.id FROM listing, users  WHERE listing.user = ';
-    ex1 = await db.all(sql + 'users.id AND users.username LIKE ' + val);
-  } else if (type === 'price') {
-    let sql = 'SELECT id FROM listing WHERE price < ' + parseInt(search);
-    ex1 = await db.all(sql);
-  }
-  return ex1;
-}
 
 /*
  * This endpoint provides the front end with all data related to individual listings. For example,
@@ -238,21 +229,42 @@ app.post('/shopping/sell', async function(req, res) {
   }
 });
 
-// buy endpoint, subtract quantity of the item bought, subtract person who bought monies,
+//buy endpoint, subtract quantity of the item bought, subtract person who bought monies,
 app.post('/shopping/buy', async function(req, res) {
   try {
     let db = await getDBConnection();
-    let id = req.body.id;
-    let user = req.body.user;
-    let price = req.body.price;
-    let quantity = req.body.quantity;
+    let id = req.body.id; //int id for the product they are buying
+    let user = req.body.user; //string for the user
+    //let item = req.body.item;
+    let price = req.body.price; //int price of the item
+    let quantity = req.body.quantity; //int quantity of the item
     let total = price * quantity;
     if (id.length < 1 || price.length < 1 || quantity < 1) {
       res.type('text');
       res.status(400).send('Missing one or more of the required params.');
       return;
     }
-    buyHelper(db, quantity, total, res, id, user);
+    let dbQuantity = await db.all('SELECT quantity FROM listing WHERE id = ' + id);
+    let userMonies = await db.all('SELECT monies FROM users WHERE username = ' + "'" +user + "'");
+    dbQuantity = dbQuantity[0];
+    userMonies = userMonies[0];
+    if(quantity > dbQuantity.quantity) {
+      res.type('text');
+      res.status(400).send('Too many items requested');
+      return;
+    }
+    else if(parseInt(quantity) === parseInt(dbQuantity.quantity)) {
+      let sql = 'DELETE FROM listing WHERE id = ' + id;
+      let reso = db.run(sql);
+    } else {
+      if(parseInt(total) > parseInt(userMonies.monies)) {
+        res.type('text');
+        res.status(400).send("insufficient funds");
+        return;
+      }
+      let sql1 = 'UPDATE listing SET quantity = quantity - ? WHERE id = ?;'
+      let ex1 = await db.run(sql1, [quantity, id]);
+    }
     let sql2 = 'UPDATE users SET monies = monies - ? WHERE username = ?';
     let ex2 = db.run(sql2, [total, user]);
     res.json(ex2);
@@ -261,38 +273,6 @@ app.post('/shopping/buy', async function(req, res) {
     res.status(400).send('Missing one or more of the required params.');
   }
 });
-
-/**
- * Generates an unused sessionid and returns it to the user.
- * @param {Object} db - The database for the backend
- * @param {string} quantity - The quantity that is availible
- * @param {string} total - the total cost of the goods
- * @param {Promise} res - the response object
- * @param {object} id - the id of the object
- * @param {Object} user - the id of the user
- */
-async function buyHelper(db, quantity, total, res, id, user) {
-  let dbQuantity = await db.all('SELECT quantity FROM listing WHERE id = ' + id);
-  let userString = "'" + user + "'";
-  let userMonies = await db.all('SELECT monies FROM users WHERE username = ' + userString);
-  dbQuantity = dbQuantity[0];
-  userMonies = userMonies[0];
-  if (quantity > dbQuantity.quantity) {
-    res.type('text');
-    res.status(400).send('Too many items requested');
-  } else if (parseInt(quantity) === parseInt(dbQuantity.quantity)) {
-    let sql = 'DELETE FROM listing WHERE id = ' + id;
-    db.run(sql);
-  } else {
-    if (parseInt(total) > parseInt(userMonies.monies)) {
-      res.type('text');
-      res.status(400).send("insufficient funds");
-      return;
-    }
-    let sql1 = 'UPDATE listing SET quantity = quantity - ? WHERE id = ?;';
-    await db.run(sql1, [quantity, id]);
-  }
-}
 
 // Logs a user out by expiring their cookie.
 app.post('/logout', function(req, res) {
