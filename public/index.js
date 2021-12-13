@@ -582,7 +582,7 @@
     dValue.classList.add('product-values');
     pMoney.textContent = curListing.price;
     pMoney.classList.add('product-money');
-    pMoney.classList.add('currSign');
+    pMoney.classList.add('curr-sign');
     pAmountTag.textContent = "Avaliable:";
     pAmountTag.classList.add('product-amount-tag');
     pAmount.textContent = curListing.quantity;

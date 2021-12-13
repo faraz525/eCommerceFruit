@@ -102,7 +102,8 @@ app.get('/history/:user', async function(req, res) {
   try {
     let db = await getDBConnection();
     let nameId = req.params.user;
-    let sql = 'SELECT id FROM users WHERE sessionId = ' + "'" + nameId + "'";
+    let nameString = "'" + nameId + "'";
+    let sql = 'SELECT id FROM users WHERE sessionId = ' + nameString;
     let id = await db.all(sql);
     let sql1 = 'SELECT * FROM transactions WHERE nameid = ' + id[0].id;
     let ex1 = await db.all(sql1);
@@ -272,7 +273,8 @@ app.post('/shopping/buy', async function(req, res) {
  */
 async function buyHelper(db, quantity, total, res, id, user) {
   let dbQuantity = await db.all('SELECT quantity FROM listing WHERE id = ' + id);
-  let userMonies = await db.all('SELECT monies FROM users WHERE username = ' + "'" + user + "'");
+  let userString = "'" + user + "'";
+  let userMonies = await db.all('SELECT monies FROM users WHERE username = ' + userString);
   dbQuantity = dbQuantity[0];
   userMonies = userMonies[0];
   if (quantity > dbQuantity.quantity) {
@@ -314,7 +316,8 @@ app.get('/getuser/:user', async function(req, res) {
   let nameId = req.params.user;
   try {
     let db = await getDBConnection();
-    let sql = 'SELECT username, id, monies FROM users WHERE sessionId = ' + "'" + nameId + "'";
+    let nameString = "'" + nameId + "'";
+    let sql = 'SELECT username, id, monies FROM users WHERE sessionId = ' + nameString;
     let id = await db.all(sql);
     res.send(id);
   } catch (err) {

@@ -91,12 +91,8 @@ button:hover {
   border-color: #3A5743;
 }
 
-.currSign:before {
+.curr-sign:before {
   content: '$';
-}
-
-.hidden {
-  display: none !important;
 }
 
 /* login styles */
@@ -411,4 +407,8 @@ button:hover {
 
 .product .product-labels .product-seller {
   inline-size: 90%;
+}
+
+.hidden {
+  display: none !important;
 }
