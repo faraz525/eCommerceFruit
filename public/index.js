@@ -1,6 +1,6 @@
 /**
- * Name: Nicholas Neshev
- * Date: 11/30/2021
+ * Name: Nicholas Neshev and Faraz Qureshi
+ * Date: 12/12/2021
  * Section: CSE 154 AB
  *
  * index.js file for our final project. This project sees that we create a ecommerce site

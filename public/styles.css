@@ -1,3 +1,15 @@
+/*
+  ***
+  Nicholas Neshev and Faraz Qureshi
+  12/12/21
+  Section AB, Shriya Kurpad and Abdul Itani
+
+  This is the styles.html page for our final project. It has a general theme of placing borders
+  around important sections, with a lot of flex management to organize lists of items and align text
+  fields. The site has a white background with various earthy tones of accent color.
+  ***
+*/
+
 body {
   margin: 0px;
 }
