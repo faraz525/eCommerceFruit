@@ -19,7 +19,7 @@ objects will appear.
 
 **Example Response:**
 
-```
+```JSON
  {
     "username": "testing",
     "name": "wheat",
@@ -51,7 +51,7 @@ objects will appear.
 
 **Example Response:**
 
-```
+```JSON
   {
     "id": 1
   },
@@ -109,7 +109,7 @@ session id that they are logged in with.
 **Example Request:** /yipper/s6siuk47dnw0vvtp1rfoo
 
 **Example Response:**
-```
+```JSON
 {
     "username": "Joe",
     "name": "wheat",
@@ -123,6 +123,7 @@ session id that they are logged in with.
 **Error Handling:**
 - Possible 400 (client error) if the client is missing one or more of the required
 parameters.
+- Possible 400 (client error) if the user does not have any history
 
 
 ## Update the history of the user
@@ -170,6 +171,7 @@ form info
 **Error Handling:**
 - Possible 400 (client error) if the client is missing one or more of the required
 parameters.
+- Possible 400 (client error) if the username or password is incorrect
 
 ## Signs up a new user
 **Request Format:** /signup
@@ -239,6 +241,8 @@ form info
 
 **Error Handling:**
 - Possible 400 (client error) if there arent enough parameters or they are incorrect
+- Possible 400 (client error) if the user does not have enough money to make the purchase
+- Possible 400 (client error) if the user tries to buy more of the item than is avaliable
 
 
 ## Logsout the user
@@ -260,7 +264,7 @@ successfully logged out
 ```
 
 **Error Handling:**
-- Possible 500 (client error) if there arent enough parameters or they are incorrect
+- Possible 500 (server error) if there arent enough parameters or they are incorrect
 
 
 ## Logsout the user
@@ -282,7 +286,7 @@ successfully logged out
 ```
 
 **Error Handling:**
-- Possible 500 (client error) if there arent enough parameters or they are incorrect
+- Possible 500 (server error) if there arent enough parameters or they are incorrect
 
 
 ## Logsout the user
@@ -308,7 +312,7 @@ successfully logged out
 ```
 
 **Error Handling:**
-- Possible 500 (client error) if there arent enough parameters or they are incorrect
+- Possible 400 (server error) if the user does not exist
 
 
 
