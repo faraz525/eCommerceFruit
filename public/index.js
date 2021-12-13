@@ -157,15 +157,22 @@
   function goLogin() {
     clearSearch();
     qs("h1").textContent = "Please enter your information :)";
+    clearLogin();
     showView("login");
     disableNavButtons();
+  }
+
+  /** ------------------------------ Login Functions  ------------------------------ */
+
+  /**
+   * Clears all fields in the login view
+   */
+  function clearLogin() {
     let loginFields = qsa('#login input');
     for (let i = 0; i < loginFields.length; i++) {
       loginFields[i].value = "";
     }
   }
-
-  /** ------------------------------ Login Functions  ------------------------------ */
 
   /**
    * Saves a cookie
@@ -182,6 +189,7 @@
    * Switches between a menu for signing up and logging in
    */
   function toggleLogin() {
+    clearLogin();
     let label = qs('#login form label');
     label.classList.toggle('hidden');
     let email = qs('#login form #email');
